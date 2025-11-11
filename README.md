@@ -19,7 +19,11 @@ Los genes incluidos en la carpeta son:
 - p53
 - ABCA1 (alternativo)
 
+# Graficos
+## Autora: Pilar Navarro Sanchez (PilarNavarro833)
 
+En esta carpeta estaran las figuras y graficas de este proyecto
+Figura 1, Figura 2, Figura 3
 # Muestras
 ## Autor: Pedro Manuel Rodríguez Santos (@PedroMRS)
 
