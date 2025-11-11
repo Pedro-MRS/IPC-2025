@@ -25,6 +25,7 @@ Los genes incluidos en la carpeta son:
 En esta carpeta estaran las figuras y graficas de este proyecto
 
 -Figura 1, Figura 2, Figura 3
+
 # Muestras
 ## Autor: Pedro Manuel Rodríguez Santos (@PedroMRS)
 
@@ -32,3 +33,11 @@ En esta carpeta se encuentran los archivos con las muestras proteícas obtenidas
 
 - igG
 - igN
+
+# Resultados
+## Autora: Paula Norniella Jamart (paula-nj)
+
+En esta carpeta se encuentran documentos relacionados con los datos obtenidos y la interpretación de resultados
+
+- Tabla-datos
+- Conclusiones
