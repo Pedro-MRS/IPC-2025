@@ -1,5 +1,5 @@
 # IPC-2025
-## Investigación Proteíca Cardiológica
+## Investigación Proteinas Cardíacas
 Objetivo: Investigar el efecto de diferentes fármacos o condiciones experimentales sobre la expresión y función de proteínas cardíacas, con el fin de desarrollar estrategias terapéuticas para mejorar la función miocárdica.
 
 
