@@ -9,3 +9,13 @@ Repositorio ejemplo asignatura
 En esta carpeta estarán los programas a utilizar por los colaboradores del proyecto para analizar los datos y producir resultados. Programas incluídos:
 
 Script.R: genera estadísticas descriptivas para datos de expresión
+
+# Secuencias
+## Autora: Paula Damián Moral (pauladm23)
+
+En esta carpeta se encuentran secuencias de nucleotidos de genes de la especie Homo sapiens para trabajar con ellos. 
+Los genes incluidos en la carpeta son:
+
+- p53
+- ABCA1 (alternativo)
+
