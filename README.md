@@ -1,6 +1,8 @@
 # IPC-2025
 ## Investigación Proteinas Cardíacas
-Objetivo: Investigar el efecto de diferentes fármacos o condiciones experimentales sobre la expresión y función de proteínas cardíacas, con el fin de desarrollar estrategias terapéuticas para mejorar la función miocárdica.
+Objetivo: Determinar el papel de las proteínas cardíacas en la función y estructura del miocardio, con el fin de comprender los mecanismos moleculares que regulan la contracción y el mantenimiento del tejido cardíaco.
+
+Propósitvo: Investigar el efecto de diferentes fármacos o condiciones experimentales sobre la expresión y función de proteínas cardíacas, con el fin de desarrollar estrategias terapéuticas para mejorar la función miocárdica.
 
 
 # Programas
