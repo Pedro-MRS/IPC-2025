@@ -9,3 +9,9 @@ Repositorio ejemplo asignatura
 En esta carpeta estarán los programas a utilizar por los colaboradores del proyecto para analizar los datos y producir resultados. Programas incluídos:
 
 Script.R: genera estadísticas descriptivas para datos de expresión
+
+
+# Muestras
+## Autor: Pedro Manuel Rodríguez Santos
+
+En esta carpeta estarán los archivos con las muestras proteícas.
