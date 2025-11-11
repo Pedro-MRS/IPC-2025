@@ -21,7 +21,7 @@ Los genes incluidos en la carpeta son:
 
 
 # Muestras
-## Autor: Pedro Manuel Rodríguez Santos
+## Autor: Pedro Manuel Rodríguez Santos (@PedroMRS)
 
 En esta carpeta se encuentran los archivos con las muestras proteícas obtenidas.
 
