@@ -24,3 +24,6 @@ Los genes incluidos en la carpeta son:
 ## Autor: Pedro Manuel Rodríguez Santos
 
 En esta carpeta se encuentran los archivos con las muestras proteícas obtenidas.
+
+- igG
+- igN
