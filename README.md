@@ -3,8 +3,8 @@
 Repositorio ejemplo asignatura 
 
 
-## Programas
-# Autor: Rubén Martín-Blázquez (@rmblazquez)
+# Programas
+## Autor: Rubén Martín-Blázquez (@rmblazquez)
 
 En esta carpeta estarán los programas a utilizar por los colaboradores del proyecto para analizar los datos y producir resultados. Programas incluídos:
 
