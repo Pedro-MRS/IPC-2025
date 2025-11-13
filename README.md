@@ -45,3 +45,8 @@ En esta carpeta se encuentran documentos relacionados con los datos obtenidos y 
 
 - Tabla-datos
 - Conclusiones
+
+# Finanzas
+## Autor: Pedro García Sáez (@PedroGaSa)
+
+En esta carpeta se van a recoger todos los movimientos economicos asociados al proyecto. Como el presupuesto asignado al proyecto y los gastos que se vayan asociando al proyecto (gasto en materiales, personal, publicación en revista) 
