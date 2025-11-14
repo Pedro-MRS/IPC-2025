@@ -24,11 +24,10 @@ Los genes incluidos en la carpeta son:
 # Graficos
 ## Autora: Pilar Navarro Sanchez (PilarNavarro833)
 
-En esta carpeta estaran las figuras y graficas de este proyecto
+En esta carpeta estaran las figuras e imagenes de este proyecto
 
-- Figura 1
-- Figura 2
-- Figura 3
+- Figuras
+- Imagenes
 
 # Muestras
 ## Autor: Pedro Manuel Rodríguez Santos (@PedroMRS)
