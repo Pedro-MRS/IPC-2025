@@ -119,4 +119,4 @@ rm rnaseqHeader *_quant.csv
 
 mkdir $projectDir/Resultados/R
 
-ln -s $projectDir/Resultados/Salmon/SimpsonsExpression.csv $projectDir/Resultados/R/SimpsonsExpression.csv
+cp $projectDir/Resultados/Salmon/SimpsonsExpression.csv $projectDir/Resultados/R/SimpsonsExpression.csv
