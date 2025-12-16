@@ -1,5 +1,6 @@
-## Código para generar el VolcanoPlot de los datos
+########### Código para generar el VolcanoPlot de los datos  ################
 
+# Cargamos la libreria
 BiocManager::install('EnhancedVolcano')
 library(EnhancedVolcano)
 
@@ -14,8 +15,8 @@ EnhancedVolcano(res_limpios_df,
                 y = 'pvalue',
                 xlab = bquote(~Log[2]~ 'fold change (Obeso1 vs Normopeso)'),
                 ylab = bquote(~-Log[10]~ 'p-value'),
-                pCutoff = 0.05,
-                FCcutoff = 1,
+                pCutoff = 0.05,     # perfilamos umbral de significancia <0,05
+                FCcutoff = 1,       # significancia biológica
                 pointSize = 2.0,
                 labSize = 4.0,      # tamaño nombre genes
                 col = c("grey50", "grey50", "royalblue", "red"),
