@@ -1,0 +1,55 @@
+########### Código para generar el Pheatmap de los datos  ################
+
+# Instalación (solo si no están instalados)
+install.packages(c("tidyverse", "readxl", "pheatmap"))
+# Bioconductor
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("DESeq2")
+
+# Carga de librerías
+library(tidyverse)
+library(readxl)
+library(pheatmap)
+library(DESeq2)
+
+# Carga de archivos DESeq2 y genes
+
+deseq_res <- read.csv("DESeq2_simpsons_limpios.csv", row.names = 1)
+
+tx2gene <- read_tsv("Transcrito_a_Gen.tsv",
+                    col_names = c("transcript_id", "gene_id"))
+
+# Filtrado de genes diferencialmente expresados
+
+deg <- deseq_res %>%
+  filter(!is.na(padj)) %>%
+  filter(padj < 0.05, abs(log2FoldChange) > 1)
+
+# Agregación a nivel de gen
+
+deg_gene <- deg %>%
+  group_by(gene_id) %>%
+  summarise(log2FC = mean(log2FoldChange, na.rm = TRUE)) %>%
+  ungroup()
+
+top_genes <- deg_gene %>%
+  arrange(desc(abs(log2FC))) %>%
+  slice(1:50)
+
+mat <- top_genes %>%
+  column_to_rownames("gene_id") %>%
+  as.matrix()
+
+# Escalado por fila (recomendado)
+mat_scaled <- t(scale(t(mat)))
+
+pheatmap(
+  mat_scaled,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  show_rownames = TRUE,
+  show_colnames = TRUE,
+  color = colorRampPalette(c("blue", "white", "red"))(100),
+  main = "Heatmap de genes diferencialmente expresados"
+)

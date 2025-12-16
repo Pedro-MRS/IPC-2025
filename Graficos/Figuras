@@ -1,4 +1,0 @@
-# script_figuras.R
-# Script para generar figuras (histograma, scatter + regresión, boxplot, heatmap, figura compuesta)
-# Dependencias: ggplot2, patchwork, reshape2 (instalar si no las tiene)
-# Uso: Rscript script_figuras.R /ruta/de/salida
