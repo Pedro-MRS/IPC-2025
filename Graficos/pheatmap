@@ -1,55 +1,42 @@
 ########### Código para generar el Pheatmap de los datos  ################
 
-# Instalación (solo si no están instalados)
-install.packages(c("tidyverse", "readxl", "pheatmap"))
-# Bioconductor
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install("DESeq2")
-
 # Carga de librerías
-library(tidyverse)
-library(readxl)
-library(pheatmap)
 library(DESeq2)
+library(tidyverse)
+library(pheatmap)
 
-# Carga de archivos DESeq2 y genes
+# Convertimos a data.frame y añadimos nombres de genes
+res_limpios_df <- as.data.frame(res_limpios)
+res_limpios_df$gene <- rownames(res_limpios_df)
 
-deseq_res <- read.csv("DESeq2_simpsons_limpios.csv", row.names = 1)
+#Secciones de genes expresados diferencialmente
+genes_sig <- res_limpios_df %>%
+  filter(pvalue < 0.05, abs(log2FoldChange) > 1) %>%
+  arrange(pvalue)
 
-tx2gene <- read_tsv("Transcrito_a_Gen.tsv",
-                    col_names = c("transcript_id", "gene_id"))
+genes_sig <- genes_sig[1:50, ]   # top 50 genes
 
-# Filtrado de genes diferencialmente expresados
+# Extraemos los conteos normalizados del objeto DESeq2
+mat_norm <- counts(dds, normalized = TRUE)
 
-deg <- deseq_res %>%
-  filter(!is.na(padj)) %>%
-  filter(padj < 0.05, abs(log2FoldChange) > 1)
+# Subconjunto con genes significativos
+mat_heatmap <- mat_norm[genes_sig$gene, ]
 
-# Agregación a nivel de gen
+# Transformación logarítmica
+mat_log <- log2(mat_heatmap + 1)
 
-deg_gene <- deg %>%
-  group_by(gene_id) %>%
-  summarise(log2FC = mean(log2FoldChange, na.rm = TRUE)) %>%
-  ungroup()
-
-top_genes <- deg_gene %>%
-  arrange(desc(abs(log2FC))) %>%
-  slice(1:50)
-
-mat <- top_genes %>%
-  column_to_rownames("gene_id") %>%
-  as.matrix()
-
-# Escalado por fila (recomendado)
-mat_scaled <- t(scale(t(mat)))
+# Escalado por gen (fila)
+mat_scaled <- t(scale(t(mat_log)))
 
 pheatmap(
   mat_scaled,
-  cluster_rows = TRUE,
-  cluster_cols = TRUE,
+  cluster_rows = TRUE,        # dendrograma de genes
+  cluster_cols = TRUE,        # dendrograma de muestras
   show_rownames = TRUE,
   show_colnames = TRUE,
+  annotation_col = annotation_col,
+  fontsize_row = 8,
   color = colorRampPalette(c("blue", "white", "red"))(100),
-  main = "Heatmap de genes diferencialmente expresados"
+  main = "Heatmap de genes diferencialmente expresados\n(Obeso1 vs Normopeso)",
+  border_color = NA
 )
