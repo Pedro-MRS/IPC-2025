@@ -1,0 +1,20 @@
+# ACTIVIDAD 2 - SECUENCIACIÓN Y ÓMICAS
+## AUTORES
+Paula Damián Moral - Paula Sofía Norniella Jamart - Pedro García Saez - Pedro Manuel Rodríguez Santos - Pilar Navarro Sánchez - Rubén Martín Blázquez
+
+## INTRODUCCIÓN
+
+## METODOLOGÍA
+La metodología consistió en el análisis de expresión diferencial de genes relacionados con la obesidad de datos de RNA-seq simulados, incluyendo un control de calidad inicial de las lecturas con FastQC y MultiQC. 
+La cuantificación y normalización de la expresión génica se realizó mediante Salmon, generando una matriz de conteos por gen. 
+La expresión diferencial, que se realizo entre los grupos Obeso 1 y Normopeso, se evaluó utilizando DESeq2. 
+Los resultados se visualizaron mediante gráficos de tipo volcano y mapas de calor (generados con ggplot2, EnhancedVolcano y pheatmap) empleando los entornos R y Linux. 
+Los resultados se interpretaron mediante bases de datos de función génica como GeneCards y PubMed y se empleo un analisis de enriquecimiento funcional (opcional).
+
+## RESULTADOS
+
+## DISCUSIÓN
+
+## CONCLUSIONES
+
+## BIBLIOGRAFÍA
