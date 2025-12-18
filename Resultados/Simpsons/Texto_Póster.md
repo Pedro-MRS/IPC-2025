@@ -21,5 +21,19 @@ Los resultados se interpretaron mediante bases de datos de función génica como
 ## DISCUSIÓN
 
 ## CONCLUSIONES
+***Abraham Simpson***: sobreexpresión gen PCSK1 en isoforma NM_001177875.2 y normalidad en isoforma NM_000439.5, normalidad en gen KSR2, normalidad en gen LEP.
+Es un perfil mayoritariamente saludable desde el punto de vista genético-metabólico, con una particularidad en la expresión de una variante de PCSK1 que, por sí sola, no define una patología clara en ausencia de síntomas clínicos. Procesamiento hormonal acelerado o respuesta compensatoria de otros desequilibrios metabólicos.
+
+***Homer Simpson***: normalidad gen PCSK1 en isoforma NM_001177875.2 y sobreexpresión en isoforma NM_000439.5, sobreexpresion en gen KSR2 pero menos, sobreexpresión en gen LEP pero menos.
+Aumento de la expresión de la isoforma principal del gen PCSK1 con aumento en la producción de insulina con un proceso metabólico a la máxima capacidad. Combinado con la sobreexpresión de KSR2 indica que es un metabolismo que aumenta la quema de grasas. La sobreexpresión de LEP el cerebro deja de responder a la hormono y suele derivar en resistencia a la leptina y además, para compensar la falta de respuesta cerebral, las células grasas producen aún más leptina, agravando la resistencia, por lo que el cuerpo actúa como si estuviera en estado de inanición, aumentando el apetito y reduciendo el metabolismo basal.
+
+***Bart Simpson***: sobreexpresión gen PCSK1 en isoforma NM_001177875.2 y normalidad en isoforma NM_000439.5, normalidad en gen KSR2, normalidad en gen LEP.
+Es un perfil mayoritariamente saludable desde el punto de vista genético-metabólico, con una particularidad en la expresión de una variante de PCSK1 que, por sí sola, no define una patología clara en ausencia de síntomas clínicos. Procesamiento hormonal acelerado o respuesta compensatoria de otros desequilibrios metabólicos.
+
+***Lisa Simpson***: normalidad gen PCSK1 en isoforma NM_001177875.2 y sobreexpresión en isoforma NM_000439.5 pero menos, sobreexpresion en gen KSR2, sobreexpresión en gen LEP pero menos.
+Indica maquinaria metabólica optimizada. Es el patrón opuesto a los trastornos metabólicos lentos, caracterizado por una respuesta hormonal ágil y un consumo energético celular elevado. El gen PCSK1 mantiene la estabilidad del procesamiento hormonal, la sobreexpresión de KSR2 facilita que el cuerpo queme ácidos grasos y utilice la glucosa en los músculos de forma muy eficaz, y una sobreexpresión de LEP moderada provoca una reducción del apetito y favorece mantener el peso.
+
+***Maggie Simpson***: normalidad gen PCSK1 en isoforma NM_001177875.2 y sobreexpresión en isoforma NM_000439.5 pero menos, sobreexpresion en gen KSR2 pero menos, sobreexpresión en gen LEP pero menos.
+Como Lisa pero con niveles un poco mas altos en la sobreexpresión de KSR2 y LEP.
 
 ## BIBLIOGRAFÍA
