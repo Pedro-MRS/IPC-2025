@@ -3,13 +3,10 @@
 Paula Damián Moral - Paula Sofía Norniella Jamart - Pedro García Saez - Pedro Manuel Rodríguez Santos - Pilar Navarro Sánchez - Rubén Martín Blázquez
 
 ## INTRODUCCIÓN
+La obesidad es un importante problema de salud pública con un marcado componente genético y familiar. El análisis de la expresión génica mediante RNAseq permite identificar genes diferencialmente expresados asociados a esta condición. En este estudio se analizan las diferencias de expresión génica entre individuos con obesidad y normopeso de la familia Simpson.
 
 ## METODOLOGÍA
-La metodología consistió en el análisis de expresión diferencial de genes relacionados con la obesidad de datos de RNA-seq simulados, incluyendo un control de calidad inicial de las lecturas con FastQC y MultiQC. 
-La cuantificación y normalización de la expresión génica se realizó mediante Salmon, generando una matriz de conteos por gen. 
-La expresión diferencial, que se realizo entre los grupos Obeso 1 y Normopeso, se evaluó utilizando DESeq2. 
-Los resultados se visualizaron mediante gráficos de tipo volcano y mapas de calor (generados con ggplot2, EnhancedVolcano y pheatmap) empleando los entornos R y Linux. 
-Los resultados se interpretaron mediante bases de datos de función génica como GeneCards y PubMed y se empleo un analisis de enriquecimiento funcional (opcional).
+La metodología se basó en el análisis de expresión génica diferencial a partir de datos simulados de RNA-seq relacionados con la obesidad. Se realizó un control de calidad inicial de las lecturas mediante FastQC y MultiQC, seguido de la cuantificación y normalización de la expresión génica con Salmon. El análisis de expresión diferencial entre los grupos Obeso 1 y Normopeso se llevó a cabo utilizando DESeq2. Los resultados se visualizaron mediante gráficos volcano y mapas de calor empleando ggplot2, EnhancedVolcano y pheatmap en entornos R y Linux. Finalmente, la interpretación biológica se realizó mediante bases de datos como GeneCards y PubMed, incluyendo de forma opcional un análisis de enriquecimiento funcional. 
 
 ## RESULTADOS
 **PCSK1 (NM_001177875.2 - NM_000439.5)**: Función de codificación para proteasa que interviene en la activación proteolítica de precursores hormonales. Ente los sustratos sobre los que actúa esta proteasa se encuentran la proopiomelanocortina (POMC) y la insulina. Mutaciones en este gen están relacionadas con una mayor susceptibilidad a la obesidad. También está relacionada con este gen la enfermedad Locus de Rasgo Cuantitativo del Índice de Masa Corporal 12 (BMI QTL 12).
