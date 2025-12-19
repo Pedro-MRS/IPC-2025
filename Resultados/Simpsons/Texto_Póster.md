@@ -44,6 +44,19 @@ Indica maquinaria metabólica optimizada. Es el patrón opuesto a los trastornos
 ***Maggie Simpson***: normalidad gen PCSK1 en isoforma NM_001177875.2 y sobreexpresión en isoforma NM_000439.5 pero menos, sobreexpresion en gen KSR2 pero menos, sobreexpresión en gen LEP pero menos.
 Como Lisa pero con niveles un poco mas altos en la sobreexpresión de KSR2 y LEP.
 
+
+Alternativa a conclusiones:
+
+**Homer Simpson**: Perfil con alto riesgo metabólico y resistencia a la leptina que deriva en un aumento del apetito y disminución del gasto energético.
+
+**Abraham y Bart Simpson**: Perfil saludable y equilibrado, rápido procesamiento de hormonas debido a expresión de variante de PCSK1.
+
+**Lisa Simpson**: Perfil metabólico muy optimizado, quema de grasa eficaz y regulación del apetito adecuada gracias a una adecuada respuesta hormonal.
+
+**Maggie Simpson**: Perfil metabólico muy optimizado con respuesta hormonal más ágil debido a una mayor expresión en KSR2 y LEP.
+
+En el caso de los pacientes que presentaban normopeso, desde el punto de vista genético se puede explicar debido a la optimización de los ciclos metabólicos mediante KSR2 y LEP (Lisa y Maggie) y también por la expresión de una de las variantes específicas de PCSK1 (Bart). Por el contrario, en los perfiles de obesidad, como es el caso de Homer, pueden deberse a una sobreexposición y posterior resistencia a la leptina. En el caso de Abraham según nuestros hallazgos, que presenta un perfil de expresión igual que Bart (normopeso), no podemos asegurar que su obesidad sea debida exclusivamente a causas genéticas.
+
 ## BIBLIOGRAFÍA
 
 1.  GeneCards. PCSK1 gene [Internet]. [Citado el 19 de diciembre de 2025]. Disponible en: https://www.genecards.org/cgi-bin/carddisp.pl?gene=PCSK1&keywords=NM_001177875.2
