@@ -1,7 +1,6 @@
 ########### Código para generar el VolcanoPlot de los datos  ################
 
 # Cargamos la libreria
-BiocManager::install('EnhancedVolcano')
 library(EnhancedVolcano)
 
 # Generamos data frame con el nombre de los genes
@@ -18,6 +17,7 @@ EnhancedVolcano(res_limpios_df,
                 y = 'pvalue',
                 xlab = bquote(~Log[2]~ 'Log2foldchange (Obeso1 vs Normopeso)'),
                 ylab = bquote(~-Log[10]~ 'p-value'),
+                ylim = c(0, 2),     # ponemos 2 como límite del eje Y
                 pCutoff = 0.05,     # perfilamos umbral de significancia <0,05
                 labSize = 4.0,      # tamaño nombre genes
                 axisLabSize = 10,
