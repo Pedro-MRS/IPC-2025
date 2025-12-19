@@ -23,6 +23,8 @@ Tras realizar el análisis y representaciones gráficas pertinentes, se obtienen
 
 ## DISCUSIÓN
 
+Los genes obtenidos tras el análisis de los diferentes perfiles tienen una importante relevancia en la regulación del peso corporal y el metabolismo. Estos procesos dependes de una compleja interacción entre procesamientos hormonales (PCSK1), señalización celular (KSR2) y regulación del apetito (LEP) (4, 5, 6). En el caso de PCSK1, activa importantes precursores hormonales, pero su deficiencia severa puede provocar obesidad y trastornos endocrinos (4). Por otro lado, el gen KSR2 coordina la señalización entre AMPK y Raf/MEK/ERK, regulando la termogénesis y el gasto energético (5). Y por último el gen LEP, encargado de la producción de leptina, fundamental en la regulación de la saciedad. Sin embargo, niveles elevados de leptina se han asociado a la resistencia de dicha hormona, provocando una desregulación en el ciclo de saciedad y fomentando la hiperfagia y la obesidad (6).
+
 ## CONCLUSIONES
 ***Abraham Simpson***: sobreexpresión gen PCSK1 en isoforma NM_001177875.2 y normalidad en isoforma NM_000439.5, normalidad en gen KSR2, normalidad en gen LEP.
 Es un perfil mayoritariamente saludable desde el punto de vista genético-metabólico, con una particularidad en la expresión de una variante de PCSK1 que, por sí sola, no define una patología clara en ausencia de síntomas clínicos. Procesamiento hormonal acelerado o respuesta compensatoria de otros desequilibrios metabólicos.
@@ -44,3 +46,7 @@ Como Lisa pero con niveles un poco mas altos en la sobreexpresión de KSR2 y LEP
 1.  GeneCards. PCSK1 gene [Internet]. [Citado el 19 de diciembre de 2025]. Disponible en: https://www.genecards.org/cgi-bin/carddisp.pl?gene=PCSK1&keywords=NM_001177875.2
 2.  GeneCards. KSR2 gene [Internet]. [Citado el 19 de diciembre de 2025]. Disponible en: https://www.genecards.org/cgi-bin/carddisp.pl?gene=KSR2&keywords=NM_173598.6
 3.  GeneCards. LEP gene [Internet]. [Citado el 19 de diciembre de 2025]. Disponible en: https://www.genecards.org/cgi-bin/carddisp.pl?gene=LEP&keywords=NM_000230.3
+4.  Ramos-Molina B, Martin MG, Lindberg I. PCSK1 Variants and Human Obesity. Prog Mol Biol Transl Sci. 2016;140:47-74. doi: 10.1016/bs.pmbts.2015.12.001.
+5.  Guo L, Costanzo-Garvey DL, Smith DR, Neilsen BK, MacDonald RG, Lewis RE. Kinase Suppressor of Ras 2 (KSR2) expression in the brain regulates energy balance and glucose homeostasis. Mol Metab. 2016 Dec 18;6(2):194-205. doi: 10.1016/j.molmet.2016.12.004.
+6.  Zhang Y, Scarpace PJ. The role of leptin in leptin resistance and obesity. Physiol Behav. 2006 Jun 30;88(3):249-56. doi: 10.1016/j.physbeh.2006.05.038.
+
