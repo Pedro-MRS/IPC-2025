@@ -15,11 +15,11 @@ Propuesta: En este trabajo se llevó a cabo un análisis de expresión génica d
 ## RESULTADOS
 Tras realizar el análisis y representaciones gráficas pertinentes, se obtienen los siguientes genes principales:
 
-**PCSK1 (NM_001177875.2 - NM_000439.5)**: Función de codificación para proteasa que interviene en la activación proteolítica de precursores hormonales. Ente los sustratos sobre los que actúa esta proteasa se encuentran la proopiomelanocortina (POMC) y la insulina. Mutaciones en este gen están relacionadas con una mayor susceptibilidad a la obesidad. También está relacionada con este gen la enfermedad Locus de Rasgo Cuantitativo del Índice de Masa Corporal 12 (BMI QTL 12).
+**PCSK1 (NM_001177875.2 - NM_000439.5)**: Función de codificación para proteasa que interviene en la activación proteolítica de precursores hormonales. Ente los sustratos sobre los que actúa esta proteasa se encuentran la proopiomelanocortina (POMC) y la insulina. Mutaciones en este gen están relacionadas con una mayor susceptibilidad a la obesidad. También está relacionada con este gen la enfermedad Locus de Rasgo Cuantitativo del Índice de Masa Corporal 12 (BMI QTL 12) (1).
 
-**KSR2 (NM_173598.6)**: Favorece la actividad de la proteína serina/treonina quinasa y se asocia con la regulación positiva de la termogénesis, debido a lo cual puede tener un papel en el gasto energético. Patologías relacionadas con este gen incluyen el Locus de Rasgo Cuantitativo del Índice de Masa Corporal 11 (BMI QTL 11), relacionándolo con una posible predisposición genética al peso corporal.
+**KSR2 (NM_173598.6)**: Favorece la actividad de la proteína serina/treonina quinasa y se asocia con la regulación positiva de la termogénesis, debido a lo cual puede tener un papel en el gasto energético. Patologías relacionadas con este gen incluyen el Locus de Rasgo Cuantitativo del Índice de Masa Corporal 11 (BMI QTL 11), relacionándolo con una posible predisposición genética al peso corporal (2).
 
-**LEP (NM_000230.3)**: Encargado de la codificación de la proteína Leptina, secretada por los adipocitos blancos y fundamental en la regulación del equilibrio energético y el control del peso corporal. La leptina activa vías de señalización que inhiben la alimentación y promueven el gasto energético. Mutaciones en este gen y regiones reguladoras se asocian a obesidad grave y obesidad mórbida con hipogonadismo. Algunas enfermedades asociadas incluyen el ya mencionado Locus de Rasgo Cuantitativo del Índice de Masa Corporal 11.
+**LEP (NM_000230.3)**: Encargado de la codificación de la proteína Leptina, secretada por los adipocitos blancos y fundamental en la regulación del equilibrio energético y el control del peso corporal. La leptina activa vías de señalización que inhiben la alimentación y promueven el gasto energético. Mutaciones en este gen y regiones reguladoras se asocian a obesidad grave y obesidad mórbida con hipogonadismo. Algunas enfermedades asociadas incluyen el ya mencionado Locus de Rasgo Cuantitativo del Índice de Masa Corporal 11 (3).
 
 ## DISCUSIÓN
 
@@ -40,3 +40,7 @@ Indica maquinaria metabólica optimizada. Es el patrón opuesto a los trastornos
 Como Lisa pero con niveles un poco mas altos en la sobreexpresión de KSR2 y LEP.
 
 ## BIBLIOGRAFÍA
+
+1.  GeneCards. PCSK1 gene [Internet]. [Citado el 19 de diciembre de 2025]. Disponible en: https://www.genecards.org/cgi-bin/carddisp.pl?gene=PCSK1&keywords=NM_001177875.2
+2.  GeneCards. KSR2 gene [Internet]. [Citado el 19 de diciembre de 2025]. Disponible en: https://www.genecards.org/cgi-bin/carddisp.pl?gene=KSR2&keywords=NM_173598.6
+3.  GeneCards. LEP gene [Internet]. [Citado el 19 de diciembre de 2025]. Disponible en: https://www.genecards.org/cgi-bin/carddisp.pl?gene=LEP&keywords=NM_000230.3
