@@ -9,34 +9,38 @@
 # 1. Cargamos las librerías.
 
 library(BiocManager)
+library(tximport)
 library(DESeq2)
 library(dplyr)
 
 # 2. Cargamos la matriz de datos indicando el separador (;).
 
-DataSimpsons <- read.table("SimpsonsExpression.csv", header = TRUE, sep = ";", stringsAsFactors = FALSE) 
+design <- read.csv("Design.csv", sep = ",")
+samples <- design$Sample[which(design$Condition == "Normopeso" | design$Condition == "Sobrepeso/Obeso1")]
+dir <- paste0(getwd())
+files <- c()
+for (i in 1:length(samples)) {
+  files[i] <- paste0(dir, "/Resultados/Salmon/", samples[i] , "_quant/quant.sf")
+}
 
-# Ponemos los ID de los genes como nombres de fila y, posteriormente, eliminamos la fila Gene.
-rownames(DataSimpsons) = DataSimpsons$Gene
-head(DataSimpsons)
+tx2gene <- read.csv("Transcrito_a_Gen.tsv", sep = "\t")
 
-genes <- DataSimpsons[, c("Gene")]
-DataSimpsons <- DataSimpsons[, -1]
-head(DataSimpsons)
-
-# Redondeamos las estimas de cuantificación de salmon para que DESeq2 pueda interpretarlas como conteos
-DataSimpsons <- round(DataSimpsons, digits = 0)
+data.tx <- tximport(files, type = "salmon", tx2gene = tx2gene)
+DataSimpsons <- round(data.tx$counts, digits = 0)
+colnames(DataSimpsons) <- samples
 
 # 3. Preparamos la tabla de metadatos que usará DESeq con las condiciones que queremos que tome.
 
 Simpson_names <- colnames(DataSimpsons)
 
-vector_cond <- c("Obeso1", "Obeso1", "Normopeso", "Normopeso", "Normopeso")
+vector_cond <- design$Condition[which(design$Condition == "Normopeso" | design$Condition == "Sobrepeso/Obeso1")]
 
 metadatos <- data.frame(row.names = Simpson_names,
-                        condition = factor(vector_cond, 
-                                           levels = c("Normopeso", "Obeso1")))
+                        condition = factor(vector_cond))
 
+metadatos$condition <- as.factor(metadatos$condition)
+
+levels(metadatos$condition) <- c("Normopeso", "Obeso1")
 
 # 4. Analizamos los genes con DESeq2.
 
@@ -67,23 +71,6 @@ res_limpios <- resultado_simpsons[!is.na(resultado_simpsons$padj), ]
 DESeq_Simpsons_limpios <- as.data.frame(res_limpios)
 
 # Comprobamos qué transcritos están diferencialmente expresados (p-valor menor a 0.05)
-rownames(res_limpios[which(res_limpios$pvalue < 0.05), ])
-# > [1] "NM_001375961.1"   
-# NM_001375961.1: cell adhesion molecule 2 CADM2: reducing Cadm2 expression can reverse several traits associated with the metabolic syndrome including obesity, insulin resistance, and impaired glucose homeostasis (DOI: 10.1016/j.molmet.2017.11.010)
-
-# Solo sale un transcrito diferencialmente expresado, así que ampliamos el corte del p-valor a 0.1 para observar transcritos con diferencias marginales de expresión
-rownames(res_limpios[which(res_limpios$pvalue < 0.1), ])
-# > [1] "NM_001375961.1" "NM_033181.4"    "NM_001003680.3" "XM_005252001.4" "NM_005068.3" "NM_001363705.2"  
-
-# NM_001375961.1: cell adhesion molecule 2 CADM2: reducing Cadm2 expression can reverse several traits associated with the metabolic syndrome including obesity, insulin resistance, and impaired glucose homeostasis (DOI: 10.1016/j.molmet.2017.11.010)
-# NM_033181.4: Cannabinoid receptor 1 CNR1: May contribute to the development of diet-induced obesity and several obesity-associated features, such as dyslipidemia and liver steatosis, regulating peripheral lipogenesis, energy expenditure and feeding behavior (DOI: 10.1210/jc.2006-2523)
-# NM_001003680.3: Leptin receptor LEPR: Linked to Leptin receptor deficiency (LEPRD), a rare disease characterized by normal levels of serum leptin, hyperphagia and severe obesity from an early age (DOI: 10.1038/32911)
-# XM_005252001.4: BDNF/NT-3 growth factors receptor NTRK2: Linked to Obesity, hyperphagia, and developmental delay (OBHD), a disorder characterized by early-onset obesity, hyperphagia, and severe developmental delay in motor function, speech, and language (DOI: 10.1038/nn1336)
-# NM_005068.3: Single-minded homolog 1 SIM1: Rare variants in single-minded 1 (SIM1) are associated with severe obesity (DOI: 10.1172/JCI68016)
-# NM_001363705.2: E3 ubiquitin-protein ligase UBR2: the risk of a clinical diagnosis of hypertension was increased significantly in carriers of UBR2 and UBR3 [...], but the effect observed in UBR3 Protein Truncating Variants carriers was nearly double that of UBR2(doi: 10.1038/s41588-025-02364-2)
-
-
-
-
-
-
+# Comprobamos qué transcritos están diferencialmente expresados (p-valor menor a 0.05)
+rownames(res_limpios[which(res_limpios$padj < 0.05), ])
+# [1] "BDNF"  "CADM2" "LEP"   "LEPR"  "MC4R"  "NTRK2" "PCSK1" "POMC"  "SH2B1"
