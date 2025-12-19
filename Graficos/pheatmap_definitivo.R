@@ -10,8 +10,8 @@ res_limpios_df <- as.data.frame(res_limpios)
 
 #Secciones de genes expresados diferencialmente
 genes_sig <- res_limpios_df %>%
-  filter(pvalue < 0.1, abs(log2FoldChange) > 1) %>%
-  arrange(pvalue)
+  filter(padj < 0.05, abs(log2FoldChange) > 0.5) %>% 
+  arrange(padj)
 
 # Calculamos los factores de tamaño (diferencias de tamaño relativo entre librerías) 
 dds <- estimateSizeFactors(dds)
