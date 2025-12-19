@@ -15,7 +15,7 @@ Propuesta: En este trabajo se llevó a cabo un análisis de expresión génica d
 ## RESULTADOS
 Tras realizar el análisis y representaciones gráficas pertinentes, se obtienen los siguientes genes principales:
 
-**PCSK1 (NM_001177875.2 - NM_000439.5)**: Función de codificación para proteasa que interviene en la activación proteolítica de precursores hormonales. Ente los sustratos sobre los que actúa esta proteasa se encuentran la proopiomelanocortina (POMC) y la insulina (1).
+**PCSK1 (NM_001177875.2 - NM_000439.5)**: Función de codificación para proteasa que interviene en la activación proteolítica de precursores hormonales. Entre los sustratos sobre los que actúa esta proteasa se encuentran la proopiomelanocortina (POMC) y la insulina (1).
 
 **KSR2 (NM_173598.6)**: Favorece la actividad de la proteína serina/treonina quinasa y se asocia con la regulación positiva de la termogénesis, debido a lo cual puede tener un papel en el gasto energético. (2).
 
@@ -23,7 +23,7 @@ Tras realizar el análisis y representaciones gráficas pertinentes, se obtienen
 
 ## DISCUSIÓN
 
-Los genes obtenidos tras el análisis de los diferentes perfiles tienen una importante relevancia en la regulación del peso corporal y el metabolismo. Estos procesos dependes de una compleja interacción entre procesamientos hormonales (PCSK1), señalización celular (KSR2) y regulación del apetito (LEP) (4, 5, 6). 
+Los genes obtenidos tras el análisis de los diferentes perfiles tienen una importante relevancia en la regulación del peso corporal y el metabolismo. Estos procesos dependes de una compleja interacción entre procesamientos hormonales (PCSK1), señalización celular (KSR2) y regulación del apetito (LEP) (1, 2, 3). 
 En el caso de PCSK1, activa importantes precursores hormonales, pero su deficiencia severa puede provocar obesidad y trastornos endocrinos. Mutaciones en este gen están relacionadas con una mayor susceptibilidad a la obesidad. También está relacionada con este gen la enfermedad Locus de Rasgo Cuantitativo del Índice de Masa Corporal 12 (BMI QTL 12)  (1, 4). 
 Por otro lado, el gen KSR2 coordina la señalización entre AMPK y Raf/MEK/ERK, regulando la termogénesis y el gasto energético. Patologías relacionadas con este gen incluyen el Locus de Rasgo Cuantitativo del Índice de Masa Corporal 11 (BMI QTL 11), relacionándolo con una posible predisposición genética al peso corporal (2, 5). 
 Y por último el gen LEP, encargado de la producción de leptina. La leptina activa vías de señalización que inhiben la alimentación y promueven el gasto energético. Niveles elevados de leptina se han asociado a la resistencia de dicha hormona, provocando una desregulación en el ciclo de saciedad y fomentando la hiperfagia y la obesidad. Mutaciones en este gen y regiones reguladoras se asocian a obesidad grave y obesidad mórbida con hipogonadismo. Algunas enfermedades asociadas incluyen el ya mencionado Locus de Rasgo Cuantitativo del Índice de Masa Corporal 11. Sin embargo (3, 6).
