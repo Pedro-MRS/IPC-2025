@@ -74,3 +74,24 @@ DESeq_Simpsons_limpios <- as.data.frame(res_limpios)
 # Comprobamos qué transcritos están diferencialmente expresados (p-valor menor a 0.05)
 rownames(res_limpios[which(res_limpios$padj < 0.05), ])
 # [1] "BDNF"  "CADM2" "LEP"   "LEPR"  "MC4R"  "NTRK2" "PCSK1" "POMC"  "SH2B1"
+
+## Boxplots de los genes diferencialmente expresados
+
+degs <- rownames(res_limpios[which(res_limpios$padj < 0.05), ])
+
+counts.norm <- counts(dds_Simpsons, normalize = TRUE)
+counts.norm <- counts.norm[degs, ]
+counts.norm.t <- as.data.frame(t(counts.norm))
+counts.norm.t$Condicion <- as.character(metadatos$condition)
+
+library(reshape2)
+counts.norm.melt <- melt(counts.norm.t, value.name = "Expresión")
+counts.norm.melt$Genes <- counts.norm.melt$variable
+counts.norm.melt$variable <- NULL
+
+ggplot(counts.norm.melt, aes(x = Genes, y = Expresión, colour = Condicion)) + 
+  geom_boxplot() +
+  theme_classic() +
+  scale_colour_manual(values = c(Normopeso = "chartreuse", 
+                                 Obeso1 = "black"))
+
