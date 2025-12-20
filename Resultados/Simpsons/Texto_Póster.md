@@ -57,6 +57,10 @@ Alternativa a conclusiones:
 
 En el caso de los pacientes que presentaban normopeso, desde el punto de vista genético se puede explicar debido a la optimización de los ciclos metabólicos mediante KSR2 y LEP (Lisa y Maggie) y también por la expresión de una de las variantes específicas de PCSK1 (Bart). Por el contrario, en los perfiles de obesidad, como es el caso de Homer, pueden deberse a una sobreexposición y posterior resistencia a la leptina. En el caso de Abraham según nuestros hallazgos, que presenta un perfil de expresión igual que Bart (normopeso), no podemos asegurar que su obesidad sea debida exclusivamente a causas genéticas.
 
+Otra conclusion:
+
+Los resultados sugieren una desregulación profunda de la vía de la leptina y el control del apetito. La sobre-expresión del receptor de leptina (LEPR) junto con la sub-expresión de la leptina misma (LEP) y otros genes clave como MC4R en el grupo Obeso1, apunta a una alteración en los mecanismos de señalización metabólica que diferencian claramente ambos estados fenotípicos.
+
 ## BIBLIOGRAFÍA
 
 1.  GeneCards. PCSK1 gene [Internet]. [Citado el 19 de diciembre de 2025]. Disponible en: https://www.genecards.org/cgi-bin/carddisp.pl?gene=PCSK1&keywords=NM_001177875.2
