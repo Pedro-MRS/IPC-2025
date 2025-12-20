@@ -1,0 +1,85 @@
+## comenzamos con la preapración del estudio 
+
+setwd("~/Documents/Master_Bioinformatica/Secuenciación_Ómicas/Actividad_grupal")
+getwd()
+
+## Instalación y carga de librerías ##
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install(c("tximport", "DESeq2"))
+install.packages(c("readr", "dplyr", "tibble", "ggplot2"))
+
+library(tximport)
+library(DESeq2)
+library(readr)
+library(dplyr)
+library(tibble)
+library(ggplot2)
+
+# Directorio base
+proj <- "~/Documents/Master_Bioinformatica/Secuenciación_Ómicas/Actividad_grupal"
+
+design <- read.csv("TallerGrupal_Ficheros/Design.csv", stringsAsFactors = FALSE)
+head(design)
+colnames(design)
+
+design_sub <- design %>%
+  filter(Condition %in% c("Sobrepeso/Obeso1", "Normopeso")) %>%
+mutate(Condition = factor (Condition)) %>% 
+arrange(Sample)
+
+design_sub
+table(design_sub$Condition)
+
+##==========================================##
+# FASE 2 importación y recuento de genes
+
+
+files <- file.path("salmon_quants", design_sub$Sample, "quant.sf")
+names(files) <- design_sub$Sample
+
+files
+file.exists(files)
+
+tx2gene <- read.delim("TallerGrupal_Ficheros/Transcrito_a_Gen.tsv", header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+colnames(tx2gene) <- c("TXNAME", "GENEID")
+head(tx2gene)
+
+
+txi <- tximport(files, type = "salmon", tx2gene = tx2gene)
+dim(txi$counts)
+
+##================================================##
+# DESeq2 y análisis #
+
+dds <- DESeqDataSetFromTximport(
+  txi,
+  colData = design_sub,
+  design = ~ Condition
+)
+
+levels(design_sub$Condition)
+
+design_sub$Conditions <- factor(design_sub$Condition)
+levels(design_sub$Condition) <- c("Normopeso", "Obeso1")
+
+dds <- DESeqDataSetFromTximport(txi, colData = design_sub, design = ~ Condition)
+dds$Condition <- relevel(dds$Condition, ref = "Normopeso")
+dds <- DESeq(dds)
+res <- results(dds, contrast = c("Condition", "Obeso1", "Normopeso"))
+
+res_df <- as.data.frame(res)
+res_df$gene <- rownames(res_df)
+res_df <- res_df[order(res_df$padj), ]
+res_sig <- res_df %>%
+  dplyr::filter(padj < 0.05, abs(log2FoldChange) >=1)
+res_sig
+nrow(res_sig)
+
+
+head(res_df)
+summary(res)
+
+write.csv(res_df, "DESeq2_Obeso1_vs_Normopeso.csv", row.names = FALSE)
