@@ -92,6 +92,8 @@ La primera dimensión (Dim1) explica el 12.5% de la varianza, y la segunda (Dim2
 
 Contribución de Variables a la Dim-1: Este gráfico de barras cuantifica qué genes son los "motores" que mueven las muestras a lo largo del eje X. Los Genes POMC, ANO4, LEPR y ADCY3 son los que más contribuyen. Superan la línea roja discontinua (contribución media esperada), por lo que son los biomarcadores más importantes para diferenciar a los individuos en la primera dimensión.
 
+Biplot: El color y la longitud de las flechas indican la contribución de cada gen a la variabilidad total. Los Genes Dominantes (Naranja/Rojo)como ANO4, POMC, LEPR y ADCY3 tienen las flechas más largas y colores cálidos. Esto significa que son los principales responsables de explicar las diferencias entre tus muestras.
+
 Luego procedemos a la agrupacion de individuos o clustering y visualizacion 
 
 ```{r}
@@ -119,4 +121,5 @@ Score plot: Se observan dos puntos claramente alejados hacia la derecha (en valo
 Círculo de Correlación de Variables: Muestra la relación entre los genes y los componentes principales. Los genes como LEPR, POMC, ADCY3 y ANO4 tienen flechas largas hacia la derecha, lo que significa que están fuertemente correlacionados positivamente con la Dim1. El color azul claro en genes como LEPR indica que están muy bien representados en este plano bidimensional. Los genes en el centro (flechas cortas) no se explican bien con solo dos dimensiones.
 
 cluster plot: Se han identificado 3 clusters. Cluster 1 (Rojo) que corresponde a los outliers detectados en el gráfico anterior. Son pocos individuos pero muy diferentes. Clusters 2 y 3 (Verde y Azul): Están muy solapados entre sí. Esto indica que, aunque el algoritmo intenta separarlos, la diferencia biológica entre estos dos grupos es sutil o los genes analizados no son suficientes para marcar una división clara entre ellos. Las elipses representan áreas de confianza. El gran solapamiento entre el grupo 2 y 3 sugiere que podrían considerarse un solo grupo grande en ciertos contextos.
+
 
