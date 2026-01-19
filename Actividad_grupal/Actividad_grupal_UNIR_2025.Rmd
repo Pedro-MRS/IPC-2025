@@ -58,4 +58,58 @@ table(shapiro_res$normal_aprox)
 En los resultados podemos observar que ninguno de los genes sigue una distribución normal.
 
 
+A continuacion procedemos al Análisis de Componentes Principales (PCA)
+
+```{r}
+
+X <- df_clean %>% select(ADCY3:UHMK1)
+pca <- prcomp(X, center = TRUE, scale. = TRUE)
+summary(pca)
+
+scores <- as.data.frame(pca$x[,1:6])
+colnames(scores) <- paste0("PC",1:6)
+df_pca <- bind_cols(df_clean, scores)
+
+# Visualizar la varianza explicada por cada componente
+library(factoextra)
+fviz_eig(pca, addlabels = TRUE, ylim = c(0, 50), 
+         barfill = "steelblue", barcolor = "steelblue",
+         title = "Varianza Explicada por Componente Principal")
+
+# Contribución de variables al PC1
+fviz_contrib(pca, choice = "var", axes = 1, top = 10)
+
+# La primera dimensión (Dim1) explica el 12.5% de la varianza, y la segunda (Dim2) el 8.6%. La caída de la curva es suave, lo que indica que la variabilidad está muy repartida entre muchos genes.
+
+# Contribución de Variables a la Dim-1: Este gráfico de barras cuantifica qué genes son los "motores" que mueven las muestras a lo largo del eje X. Los Genes POMC, ANO4, LEPR y ADCY3 son los que más contribuyen. Superan la línea roja discontinua (contribución media esperada), por lo que son los biomarcadores más importantes para diferenciar a los individuos en la primera dimensión.
+```
+
+Luego procedemos a la agrupacion de individuos o clustering y visualizacion 
+
+```{r}
+
+fviz_pca_var(pca, col.var="cos2") +
+  ggtitle("PCA - Variables (cos2)") +
+  theme_classic()
+
+fviz_pca_ind(pca, geom="point") +
+  ggtitle("PCA - Individuos") +
+  theme_classic()
+
+km_pca <- kmeans(df_pca %>% select(PC1:PC6), centers = 3, nstart = 25)
+
+Visualización del clustering
+fviz_cluster(km_pca,
+             data = df_pca %>% select(PC1:PC6),
+             geom = "point",
+             ellipse.type = "norm") +
+  theme_classic()
+
+# Score plot: Se observan dos puntos claramente alejados hacia la derecha (en valores de Dim1 > 8). Estos individuos tienen un perfil de expresión radicalmente distinto al resto del grupo central. La mayoría de las muestras están agrupadas cerca del origen, lo que sugiere una alta homogeneidad, a excepción de los outliers.
+
+# Círculo de Correlación de Variables: Muestra la relación entre los genes y los componentes principales. Los genes como LEPR, POMC, ADCY3 y ANO4 tienen flechas largas hacia la derecha, lo que significa que están fuertemente correlacionados positivamente con la Dim1. El color azul claro en genes como LEPR indica que están muy bien representados en este plano bidimensional. Los genes en el centro (flechas cortas) no se explican bien con solo dos dimensiones.
+
+# cluster plot: Se han identificado 3 clusters. Cluster 1 (Rojo) que corresponde a los outliers detectados en el gráfico anterior. Son pocos individuos pero muy diferentes. Clusters 2 y 3 (Verde y Azul): Están muy solapados entre sí. Esto indica que, aunque el algoritmo intenta separarlos, la diferencia biológica entre estos dos grupos es sutil o los genes analizados no son suficientes para marcar una división clara entre ellos. Las elipses representan áreas de confianza. El gran solapamiento entre el grupo 2 y 3 sugiere que podrían considerarse un solo grupo grande en ciertos contextos.
+
+```
 
