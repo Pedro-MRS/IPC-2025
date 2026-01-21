@@ -120,24 +120,31 @@ fviz_pca_var(pca, col.var="cos2") +
 
 De manera similar al biplot anterior, ANO4, POMC, LEPR y ADCY3 parecen ser las que mejores valores de calidad de representación poseen, estando más relacionadas con el PC1, el que más varianza explica de los datos. Los genes en el centro (flechas cortas y color azul oscuro) no están bien representados por estos dos PCs.
 
-```{r}
-# Realiza clustering de variables basado en sus coordenadas PCA (3 clusters) y visualízalo. 
-km_pca <- kmeans(df_pca %>% select(PC1:PC6), centers = 3, nstart = 25)
+A continuación, analizamos con clustering jerárquico las muestras de individuos, agrupándolos en 3 clusters, basándonos en los seis primeros PCs del PCA. Primero debemos generar una matriz de distancias euclidianas a partir de los los PCs del 1 al 6 de PCA, que se encuentran en `df_pca`, usando la función `dist()` con la opción `method = "euclidean"`. A continuación, realizamos el clustering jerárquico con el método completo usando la función `hclust()` y la opción `method = "complete"`.
 
-# Visualización del clustering
-fviz_cluster(km_pca,
-             data = df_pca %>% select(PC1:PC6),
-             geom = "point",
-             ellipse.type = "norm") +
+```{r}
+hc_pcs <- df_pca %>% 
+          select(PC1:PC6) %>% 
+          dist(method = "euclidean") %>% 
+          hclust(method = "complete")
+
+```
+
+Ahora podemos visualizar el dendrograma resultante con la función `fviz_dend()`, organizándolo en 3 clusters diferentes con la opción `k = 3`.
+
+```{r}
+fviz_dend(hc_pcs,
+          k = 3,
+          color_labesls_by_k = TRUE) +
   theme_classic()
 ```
 
-Observamos que el Cluster 1 (Rojo) engloba a los dos outliers detectados. Los Clusters 2 y 3 (Verde y Azul) están muy solapados entre sí. Esto indica que, aunque el algoritmo intenta separarlos, la diferencia biológica entre estos dos grupos es sutil o los genes analizados no son suficientes para marcar una división clara entre ellos. Las elipses representan áreas de confianza. El gran solapamiento entre el grupo 2 y 3 sugiere que podrían considerarse un solo grupo grande en ciertos contextos.
+Viendo el dendrograma, las muestras 1 y 2 se desmarcan del resto, como se ve en el PCA. El resto de muestras se organizan en dos clusters más grandes, pero el PCA no parece discriminarlos dada la relativamente poca varianza explicada de cada PC (el PC1, que es el que más varianza explica, muestra solo un 12.5% de varianza de la expresión de los 37 genes).
+
 
 Para cada PC, podemos comprobar la contribución de cada variable con la función `fiz_contrib()`. Por ejemplo, para comprobar qué variables contruibuyen más a la varianza explicada por el PC1, podemos ejecutar:
 
 ```{r}
-# Grafica las contribuciones de las variables a los componentes. 
 fviz_contrib(pca, choice = "var", axes = 1, top = 10)
 ```
 
@@ -159,15 +166,41 @@ Una vez cargada la función, la aplicamos a la variable numérica `imc_kg_m2` en
 df_clean$pesoTipo <- terciles_obesos(df_clean$imc_kg_m2)
 ```
 
+Graficamos los individuos (pacientes) en el espacio de las primeras dos componentes coloreados por categoría de IMC (Normal, Sobrepeso, Obesidad) con la función `fviz_pca_biplot`, usando la variable categórica `pesoTipo` para colorear las muestras.
+
 ```{r}
-# QUEDAN COSAS QUE HACER EN ESTE PASO!
-
-# Grafica los individuos (pacientes) en el espacio de las primeras dos componentes coloreados por categoría de IMC (Normal, Sobrepeso, Obesidad), 
-# que debes crear a partir de la variable imc_kg_m2. 
-
-# Realiza clustering de individuos (3 clusters) basado en sus scores PCA y visualízalos. 
-# Puedes apoyarte en el siguiente enlace para mejorar tus análisis: https://rpubs.com/Cristina_Gil/PCA
+fviz_pca_biplot(pca, 
+                geom.ind = "point", 
+                col.ind = df_clean$pesoTipo,  
+                col.var = "grey", 
+                repel = TRUE, 
+                title = "PCA Biplot: Muestras con IMC")
 ```
+
+Observamos que las dos muestras atípicas son de la categoría obesa, y que se relacionan con los genes ANO4 y POMC, cuyas flechas en el biplot apuntan casi directamente a estas muestras. Esperamos que los valores de expresión de estos dos genes sean de los más altos enestas dos muestras. 
+
+De nuevo analizamos con clustering jerárquico las muestras agrupándolas en 3 clusters, esta vez basándonos en sus scores de PCA. Primero debemos generar una matriz de distancias euclidianas a partir de los scores de PCA, que se encuentran en `pca$x` generado por `prcomp()`. El resto se hace igual que en el gráfico anterior: usamos `dist()` con la opción `method = "euclidean"` para generar la matriz de distancias, y `hclust()` con la opción `method = "complete"` para el clustering jerárquico.
+
+```{r}
+hc_scores <- hclust(dist(pca$x, method = "euclidean"), method = "complete")
+
+hc_scores <- pca$x %>%
+             dist(method = "euclidean") %>% 
+             hclust(method = "complete")
+```
+
+Visualizamos el dendrograma resultante con `fviz_dend()`, especificando `k = 3`.
+
+```{r}
+fviz_dend(hc_scores,
+          k = 3,
+          color_labesls_by_k = TRUE) +
+  theme_classic()
+```
+
+De nuevo, las muestras 1 y 2 se desmarcan del resto. El resto de muestras se organizan en dos clusters más grandes, como en el dendrograma anterior, pero esta vez el cluster verde incluye menos muestras. 
+
+Podemos concluir que, ya sea con dimiensiones reducidas, o con los datos escalados y centrados del PCA, es consistente que los individuos 1 y 2 presentan una expresión genética particular dentro de la categoría obeso.
 
 # Paso 5 - Heatmap
 
@@ -289,6 +322,7 @@ tbl_merge(
   tab_spanner = c("**PC1**", "**PC2**", "**PC3**")
 )
 ```
+
 
 
 
