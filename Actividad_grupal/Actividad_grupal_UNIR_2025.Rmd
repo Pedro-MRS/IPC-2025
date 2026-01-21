@@ -218,7 +218,77 @@ El heatmap de expresión génica estandarizada permite visualizar patrones de co
 De forma complementaria, el heatmap de correlaciones Spearman entre genes y los seis primeros PCs ayudó a interpretar el PCA, identificando qué genes contribuyen a cada componente. En conjunto, ambos heatmaps muestran coherencia entre los patrones de expresión observados y la estructura capturada por el análisis de componentes principales. 
 
 
+# Paso 6 - Tablas descriptivas
 
+```{r}
+# Cálculo de percentiles para dividir los datos en tres grupos iguales
+
+make_terciles <- function(x){
+  q <- quantile(x, probs=c(1/3,2/3))
+  cut(x, breaks=c(-Inf,q,Inf), labels=c("t1","t2","t3"))
+}
+
+# Creación de variables de estratificación de Componentes Principales
+df_pca <- df_pca %>%
+  mutate(
+    PC1_t = make_terciles(PC1),
+    PC2_t = make_terciles(PC2),
+    PC3_t = make_terciles(PC3)
+  )
+
+# Representación de tablas descriptivas 
+
+# Como se comprueba al inicio, los genes no siguen distribución normal, por lo que se emplean los estadísticos de mediana y rango intercuartílico
+
+stats <- list(all_continuous()~"{median} ({p25}, {p75})")
+
+# Creación de tablas individuales por cada Componente Principal
+
+# Componente Principal 1
+tabla_pc1 <- df_pca %>%
+  select(PC1_t, ADCY3:UHMK1) %>%  
+  tbl_summary(
+    by = PC1_t,                
+    statistic = stats, 
+    digits = all_continuous() ~ 1 
+  ) %>%
+  add_p(                        
+    test = all_continuous() ~ "kruskal.test",
+    pvalue_fun = ~ style_pvalue(.x, digits = 3)
+  )
+
+# Componente Principal 2
+tabla_pc2 <- df_pca %>%
+  select(PC2_t, ADCY3:UHMK1) %>%  
+  tbl_summary(
+    by = PC2_t,                
+    statistic = stats, 
+    digits = all_continuous() ~ 1 
+  ) %>%
+  add_p(                        
+    test = all_continuous() ~ "kruskal.test",
+    pvalue_fun = ~ style_pvalue(.x, digits = 3)
+  )
+
+# Componente Principal 3
+tabla_pc3 <- df_pca %>%
+  select(PC3_t, ADCY3:UHMK1) %>%  
+  tbl_summary(
+    by = PC3_t,                
+    statistic = stats, 
+    digits = all_continuous() ~ 1 
+  ) %>%
+  add_p(                        
+    test = all_continuous() ~ "kruskal.test",
+    pvalue_fun = ~ style_pvalue(.x, digits = 3)
+  )
+
+# Unión de tablas descriptivas de todos los PC
+tbl_merge(
+  tbls = list(tabla_pc1, tabla_pc2, tabla_pc3),
+  tab_spanner = c("**PC1**", "**PC2**", "**PC3**")
+)
+```
 
 
 
