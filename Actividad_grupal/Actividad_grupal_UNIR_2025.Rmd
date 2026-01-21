@@ -143,6 +143,22 @@ fviz_contrib(pca, choice = "var", axes = 1, top = 10)
 
 Este gráfico de barras cuantifica qué genes son los "motores" que mueven las muestras a lo largo del eje X. Los Genes POMC, ANO4, LEPR y ADCY3 son los que más contribuyen. Superan la línea roja discontinua (contribución media esperada), por lo que son los biomarcadores más importantes para diferenciar a los individuos en el PC1.
 
+Ahora comprobaremos cómo se distribuyen las muestras en el PCA y el análisis cluster en función de la variable índice de masa corporal (IMC), que se encuentra en el data frame como `imc_kg_m2`. Para que visualmente sea esta variable interpretable, haremos que esté dividida en tres categorías: normal, sobrepeso, y obesidad, que se correspondan con el primer, segundo y tercer tercil, respectivamente, de la distribución de la variable `imc_kg_m2`. Primero, generamos una función para calcular terciles y etiquetarlos como los niveles predichos. Primero calculará los terciles con la función `quantile()`, y a continuación establecerá las tres categorías basadas en terciles con el comando `cut()`.
+
+```{r}
+terciles_obesos <- function(x){
+  q <- quantile(x, probs = c(1/3, 2/3))
+  cut(x, breaks = c(-Inf, q, Inf), 
+      labels = c("Normal", "Sobrepeso","Obesidad"))
+}
+```
+
+Una vez cargada la función, la aplicamos a la variable numérica `imc_kg_m2` en nuestro data frame, generando la variable categórica `pesoTipo`.
+
+```{r}
+df_clean$pesoTipo <- terciles_obesos(df_clean$imc_kg_m2)
+```
+
 ```{r}
 # QUEDAN COSAS QUE HACER EN ESTE PASO!
 
@@ -200,6 +216,7 @@ pheatmap(mat_z,
 El heatmap de expresión génica estandarizada permite visualizar patrones de coexpresión y diferencias entre los individuos analizados. Este análisis exploratorio mostró la existencia de grupos de genes con comportamientos similares.
 
 De forma complementaria, el heatmap de correlaciones Spearman entre genes y los seis primeros PCs ayudó a interpretar el PCA, identificando qué genes contribuyen a cada componente. En conjunto, ambos heatmaps muestran coherencia entre los patrones de expresión observados y la estructura capturada por el análisis de componentes principales. 
+
 
 
 
