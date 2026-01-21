@@ -5,11 +5,9 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-Comenzamos creando el entorno de trabajo con las librerias necesarias y establecemos una semilla para asegurar la reproducibilidad de los datos.
+Comenzamos creando el entorno de trabajo con las librerias necesarias y establecemos una semilla para asegurar la reproducibilidad de los datos. Para ello debemos asegurarnos de que el archivo con la base de datos está en el mismo directorio en el que estamos trabajando, o establecer el entorno de trabajo con el comando `setwd()`
 
 ```{r}
-rm(list = ls())
-
 set.seed(231102)
 
 library(tidyverse)
@@ -22,25 +20,34 @@ library(pROC)
 
 ```
 
-A continuación, cargamos los datos y realizamos una limpieza.
+A continuación, cargamos los datos.
 
 ```{r}
 
-df <- read_csv("Base de datos Taller Grupal.csv")
-
-# Creamos un data frame con los genes de estudio y vemos la cantidad de datos sucios que hay en ellos.
-
-genes_df <- df %>% select(ADCY3:UHMK1)
-colSums(is.na(genes_df))
-
-# Eliminamos cualquier fila que contenga al menos un NA en el rango de genes y guardamos el resultado en un data frame con los valores limpios. Luego, revismos si se ha realizado correctamente.
-
-df_clean <- df %>% filter(complete.cases(select(., ADCY3:UHMK1)))
-any(is.na(df_clean %>% select(ADCY3:UHMK1)))
+df <- read_csv("Base de datos Los Simpson completa.csv") # HE REVERTIDO EL NOMBRE AL ORIGINAL, PARA QUE LA IMPORTACIÓN SEA INSTANTÁNEA PARA EL EVALUADOR
 
 ```
+# Paso 1: Carga y limpieza de datos
 
-Una vez tenemos los datos limpios y preparados, evaluamos la normalidad de las variables que guardan relación con la expresión génica. 
+Creamos un data frame con los genes de estudio con la función `select()` y comprobamos la cantidad de valores perdidos que hay en ellos.
+
+```{r}
+genes_df <- df %>% select(ADCY3:UHMK1)
+colSums(is.na(genes_df))
+```
+
+El set de datos de genes no presenta valores con NA, por lo que no sería necesario eliminar muestras con valores perdidos.
+
+En caso de que hubiera NAs, los podemos eliminar con la función `filter()`.
+
+```{r}
+df_clean <- df %>% filter(complete.cases(select(., ADCY3:UHMK1)))
+any(is.na(df_clean %>% select(ADCY3:UHMK1)))
+```
+
+# Paso 2: Normalidad
+
+Una vez tenemos los datos limpios y preparados, evaluamos la normalidad de las variables de expresión génica. Para ello, seleccionamos los campos de genes con la función `select()`, construimos una tabla con columnas de `gen` y `expr` para el nombre del gen y su valor de expresión para ese gen en esa muestra con `pivot_long()`, aplicamos el test de Shapiro-Wilk para determinar la normalidad de la expresión de cada gen aplicando la función `shapiro.test()` con la función `summarise()`, y cambiando la columna de p-valores generados a valores sí y no con la función `mutate()`, para saber si la prueba es significativa (datos no normales) o no (datos normales).
 
 ```{r}
 
@@ -55,31 +62,43 @@ table(shapiro_res$normal_aprox)
 
 ```
 
-En los resultados podemos observar que ninguno de los genes sigue una distribución normal.
+En los resultados podemos observar que los valores de expresión de ningún gen sigue una distribución normal.
 
+# Paso 3: Análisis de Componentes Principales (PCA)
 
-A continuacion procedemos al Análisis de Componentes Principales (PCA)
+Procedemos al análisis multivariante de las 37 variables de genes. Seleccionamos las columnas con nombres de genes con `select()`, y aplicamos la función `prcomp()` a la matriz generada, para calcular los componentes principales (PCs), varianzas explicadas acumuladas, y cargas de cada componente. Como necesitamos centrar y escalar los datos antes de realizar el PCA, ejecutamos el comando con las opciones `prcomp(center = TRUE, scale. = TRUE)`. Podemos generar una tabla con las proporciones de varianza explicada por PC con `summary()`.
 
 ```{r}
 
 X <- df_clean %>% select(ADCY3:UHMK1)
 pca <- prcomp(X, center = TRUE, scale. = TRUE)
-summary(pca)
+summary(pca) # ESTO PODEMOS PRESENTARLO COMO TABLA ADICIONAL EN EL INFORME DE LA PRÁCTICA
 
-scores <- as.data.frame(pca$x[,1:6])
-colnames(scores) <- paste0("PC",1:6)
-df_pca <- bind_cols(df_clean, scores)
+```
 
-# Visualizar la varianza explicada por cada componente
-library(factoextra)
+Además, podemos visualizar la varianza explicada por cada componente con la función `fvix_eig()`.
+
+```{r}
 fviz_eig(pca, addlabels = TRUE, ylim = c(0, 50), 
          barfill = "steelblue", barcolor = "steelblue",
          title = "Varianza Explicada por Componente Principal")
+```
 
-# Contribución de variables al PC1
-fviz_contrib(pca, choice = "var", axes = 1, top = 10)
+Tanto en la tabla como en el gráfico de barras, podemos observar que los PCs no parecen explicar mucha varianza de los datos de manera individual (el PC1 explica el 12.5% de la varianza, el PC2 el 8.6%, y así sucesivamente). Si queremos usarlos estos PCs en análisis posteriores, habrá que considerar seleccionar un número alto de los mismos para que representen bien a las 37 variables de expresión genética.
 
-# Biplot de las dos primeras dimensiones
+Podemos extraer los scores de los primeros seis PCs, y añadirlos a nuestro data frame con todos los datos.
+
+```{r}
+scores <- as.data.frame(pca$x[,1:6])
+colnames(scores) <- paste0("PC",1:6)
+df_pca <- bind_cols(df_clean, scores)
+```
+
+# Paso 4: Visualizaciones
+
+Podemos generar un biplot (gráficas que comparan los valores de pares de PCs) con `fviz_pca_biplot()`.
+
+```{r}
 fviz_pca_biplot(pca, 
                 geom.ind = "point", # Solo puntos para las muestras
                 col.ind = "grey",    # Color de las muestras
@@ -88,27 +107,24 @@ fviz_pca_biplot(pca,
                 repel = TRUE,        # Evita solapamiento de texto
                 title = "PCA Biplot: Muestras y Variables")
 ```
-La primera dimensión (Dim1) explica el 12.5% de la varianza, y la segunda (Dim2) el 8.6%. La caída de la curva es suave, lo que indica que la variabilidad está muy repartida entre muchos genes.
 
-Contribución de Variables a la Dim-1: Este gráfico de barras cuantifica qué genes son los "motores" que mueven las muestras a lo largo del eje X. Los Genes POMC, ANO4, LEPR y ADCY3 son los que más contribuyen. Superan la línea roja discontinua (contribución media esperada), por lo que son los biomarcadores más importantes para diferenciar a los individuos en la primera dimensión.
+En esta figura, el color y la longitud de las flechas indican la contribución de cada gen a la variabilidad total. Los genes que más importancia tienen, como ANO4, POMC, LEPR y ADCY3, toman colores cálidos (naranja y rojo) y presentan flechas más largas. Esto significa su relación con los grupos de muestrasa lo largo del eje de ese PC (eje y muestras perpendiculares: independencia; eje y muestras paralelas en mismo sentido: correlación positiva; eje y muestras paralelas en distinto sentido: correlación negativa). Podemos observar dos puntos claramente alejados hacia la derecha: estas muestras presentan un perfil de expresión distinto al resto.
 
-Biplot: El color y la longitud de las flechas indican la contribución de cada gen a la variabilidad total. Los Genes Dominantes (Naranja/Rojo)como ANO4, POMC, LEPR y ADCY3 tienen las flechas más largas y colores cálidos. Esto significa que son los principales responsables de explicar las diferencias entre las muestras.
-
-Luego procedemos a la agrupacion de individuos o clustering y visualizacion 
+Podemos representar visualmente la calidad de la representación de cada variable graficando la variable `cos2` del análisis PCA con la función `fviz_pca_var()`.
 
 ```{r}
-
 fviz_pca_var(pca, col.var="cos2") +
   ggtitle("PCA - Variables (cos2)") +
   theme_classic()
+```
 
-fviz_pca_ind(pca, geom="point") +
-  ggtitle("PCA - Individuos") +
-  theme_classic()
+De manera similar al biplot anterior, ANO4, POMC, LEPR y ADCY3 parecen ser las que mejores valores de calidad de representación poseen, estando más relacionadas con el PC1, el que más varianza explica de los datos. Los genes en el centro (flechas cortas y color azul oscuro) no están bien representados por estos dos PCs.
 
+```{r}
+# Realiza clustering de variables basado en sus coordenadas PCA (3 clusters) y visualízalo. 
 km_pca <- kmeans(df_pca %>% select(PC1:PC6), centers = 3, nstart = 25)
 
-Visualización del clustering
+# Visualización del clustering
 fviz_cluster(km_pca,
              data = df_pca %>% select(PC1:PC6),
              geom = "point",
@@ -116,70 +132,76 @@ fviz_cluster(km_pca,
   theme_classic()
 ```
 
-Score plot: Se observan dos puntos claramente alejados hacia la derecha (en valores de Dim1 > 8). Estos individuos tienen un perfil de expresión radicalmente distinto al resto del grupo central. La mayoría de las muestras están agrupadas cerca del origen, lo que sugiere una alta homogeneidad, a excepción de los outliers.
+Observamos que el Cluster 1 (Rojo) engloba a los dos outliers detectados. Los Clusters 2 y 3 (Verde y Azul) están muy solapados entre sí. Esto indica que, aunque el algoritmo intenta separarlos, la diferencia biológica entre estos dos grupos es sutil o los genes analizados no son suficientes para marcar una división clara entre ellos. Las elipses representan áreas de confianza. El gran solapamiento entre el grupo 2 y 3 sugiere que podrían considerarse un solo grupo grande en ciertos contextos.
 
-Círculo de Correlación de Variables: Muestra la relación entre los genes y los componentes principales. Los genes como LEPR, POMC, ADCY3 y ANO4 tienen flechas largas hacia la derecha, lo que significa que están fuertemente correlacionados positivamente con la Dim1. El color azul claro en genes como LEPR indica que están muy bien representados en este plano bidimensional. Los genes en el centro (flechas cortas) no se explican bien con solo dos dimensiones.
+Para cada PC, podemos comprobar la contribución de cada variable con la función `fiz_contrib()`. Por ejemplo, para comprobar qué variables contruibuyen más a la varianza explicada por el PC1, podemos ejecutar:
 
-cluster plot: Se han identificado 3 clusters. Cluster 1 (Rojo) que corresponde a los outliers detectados en el gráfico anterior. Son pocos individuos pero muy diferentes. Clusters 2 y 3 (Verde y Azul): Están muy solapados entre sí. Esto indica que, aunque el algoritmo intenta separarlos, la diferencia biológica entre estos dos grupos es sutil o los genes analizados no son suficientes para marcar una división clara entre ellos. Las elipses representan áreas de confianza. El gran solapamiento entre el grupo 2 y 3 sugiere que podrían considerarse un solo grupo grande en ciertos contextos.
+```{r}
+# Grafica las contribuciones de las variables a los componentes. 
+fviz_contrib(pca, choice = "var", axes = 1, top = 10)
+```
 
+Este gráfico de barras cuantifica qué genes son los "motores" que mueven las muestras a lo largo del eje X. Los Genes POMC, ANO4, LEPR y ADCY3 son los que más contribuyen. Superan la línea roja discontinua (contribución media esperada), por lo que son los biomarcadores más importantes para diferenciar a los individuos en el PC1.
 
-###====================================================================== 
-# A partir de los datos filtrados y limpiados por Paula, crearemos dos heatmap.
-# Heatmap de correlación a partir de los grupos de componentes (PCAs)
-# Heatmap de expresion a partir de los datos crudos y limpiados por Paula
-#========================================================================
+```{r}
+# QUEDAN COSAS QUE HACER EN ESTE PASO!
 
-```{r, heatmap de componentes principales}
-# Heatmap de 6 componentes principales
-  
+# Grafica los individuos (pacientes) en el espacio de las primeras dos componentes coloreados por categoría de IMC (Normal, Sobrepeso, Obesidad), 
+# que debes crear a partir de la variable imc_kg_m2. 
+
+# Realiza clustering de individuos (3 clusters) basado en sus scores PCA y visualízalos. 
+# Puedes apoyarte en el siguiente enlace para mejorar tus análisis: https://rpubs.com/Cristina_Gil/PCA
+```
+
+# Paso 5 - Heatmap
+
+Para generar un heatmap entre los seis primeros PCs y las variables de expresión de genes, primero generamos una matriz de correlaciones con la función `cor()`, especificando que usaremos el coeficiente de Spearman con la opción `method="spearman"`.
+
+```{r}
 cors <- cor(df_pca %>% select (ADCY3:UHMK1),
             df_pca %>% select(PC1:PC6),
             method="spearman", use = "pairwise.complete.obs")
+```
 
+Ahora, generamos el heatmap a partir de la matriz de correlaciones generada, usando la función `pheatmap()`.
+
+```{r, heatmap de componentes principales}
 pheatmap(cors,
          border_color = "grey80", 
          main="Correlación Spearman genes-PCs")
 
 ```
 
-El heatmap de correlaciones Spearman entre genes y PC1–PC6 evidencia que PC1 y PC3 concentran las correlaciones de mayor magnitud, 
-tanto positivas como negativas, para un subconjunto de genes, mientras que PC2, PC4 y PC5 muestran asociaciones más moderadas y homogéneas. 
-El dendrograma superior indica similitud entre algunos componentes principales, lo que sugiere que están influenciados por conjuntos de genes parcialmente compartidos. 
-El clustering de genes permite identificar grupos con patrones de correlación similares a lo largo de los componentes principales.
-  
-```{r, Heatmap expresión}
-## Heatmap de Expresión génica estandarizada
-# Primero organizaremos los datos en una matriz para su correcta visualización y una vez organizados se estandarizarán para un correcto análisis
+El heatmap de correlaciones Spearman entre genes y PC1–PC6 evidencia que PC1 y PC3 concentran las correlaciones de mayor magnitud, tanto positivas como negativas, para un subconjunto de genes, mientras que PC2, PC4 y PC5 muestran asociaciones más moderadas y homogéneas. El dendrograma superior indica similitud entre algunos componentes principales, lo que sugiere que están influenciados por conjuntos de genes parcialmente compartidos. 
 
- mat <- df_clean %>%
+El clustering con los datos de expresión de genes nos permite identificar grupos con patrones de correlación similares a lo largo de los componentes principales.
+  
+Para realizar un heatmap de la expresión génica estandarizada, primero organizaremos los datos en una matriz para su correcta visualización y una vez organizados se estandariza con la función `scale`.
+
+```{r}
+mat <- df_clean %>%
   select(ADCY3:UHMK1) %>%
   as.matrix()
 
 mat_z <- scale (mat) #estandarización
+```
 
+Visualizamos el heatmap con los valores estandardizados de expresión, de nuevo, con `pheatmap`. Este heatmap se ordenó mediante clustering jerárquico, utilizando el método de distancia euclídea y el método de enlace completo, con el fin de agrupar individuos y genes con perfiles de expresión similares (en este caso, que presenten patrones coordinados de sobre- e infra-expresión).
+
+```{r}
 pheatmap(mat_z,
   border_color = NA,
   clustering_method = "complete",
   clustering_distance_rows = "euclidean",
   clustering_distance_cols = "euclidean",
   main = "Heatmap expresión génica estandarizada")
-
 ```
 
-##=======================METODOLOGÍA HEATMAP=======================================================
-#El heatmap se organizó mediante clustering jerárquico utilizando distancia euclídea 
-#y método de enlace completo, con el fin de agrupar individuos y genes con perfiles de 
-#expresión similares.
-##==============================================================================
+El heatmap de expresión génica estandarizada permite visualizar patrones de coexpresión y diferencias entre los individuos analizados. Este análisis exploratorio mostró la existencia de grupos de genes con comportamientos similares.
 
-##-------------Explicación resultados Heatmap expresión:
-El heatmap de expresión génica estandarizada muestra patrones de coexpresión entre genes y heterogeneidad entre individuos. 
-Mediante clustering jerárquico con enlace completo se identifican grupos de individuos con perfiles de expresión similares, 
-así como conjuntos de genes que presentan patrones coordinados de sobre- e infraexpresión. 
+De forma complementaria, el heatmap de correlaciones Spearman entre genes y los seis primeros PCs ayudó a interpretar el PCA, identificando qué genes contribuyen a cada componente. En conjunto, ambos heatmaps muestran coherencia entre los patrones de expresión observados y la estructura capturada por el análisis de componentes principales. 
 
-El heatmap de expresión génica estandarizada permitió visualizar patrones de coexpresión y diferencias entre los individuos analizados. 
-Este análisis exploratorio mostró la existencia de grupos de genes con comportamientos similares. 
-De forma complementaria, el heatmap de correlaciones Spearman entre genes y los seis primeros componentes principales ayudó a interpretar el PCA, 
-identificando qué genes contribuyen a cada componente. En conjunto, ambos heatmaps muestran coherencia entre los patrones de expresión observados 
-y la estructura capturada por el análisis de componentes principales. 
+
+
+
 
