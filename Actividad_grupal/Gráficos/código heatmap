@@ -17,7 +17,10 @@ pheatmap(cors,
 
 ```
 
-
+El heatmap de correlaciones Spearman entre genes y PC1–PC6 evidencia que PC1 y PC3 concentran las correlaciones de mayor magnitud, 
+tanto positivas como negativas, para un subconjunto de genes, mientras que PC2, PC4 y PC5 muestran asociaciones más moderadas y homogéneas. 
+El dendrograma superior indica similitud entre algunos componentes principales, lo que sugiere que están influenciados por conjuntos de genes parcialmente compartidos. 
+El clustering de genes permite identificar grupos con patrones de correlación similares a lo largo de los componentes principales.
   
 ```{r, Heatmap expresión}
 ## Heatmap de Expresión génica estandarizada
@@ -34,8 +37,8 @@ pheatmap(mat_z,
   clustering_method = "complete",
   clustering_distance_rows = "euclidean",
   clustering_distance_cols = "euclidean",
-  main = "Heatmap expresión génica (z-score) — datos crudos"
-)
+  main = "Heatmap expresión génica estandarizada")
+
 ```
 
 ##=======================METODOLOGÍA HEATMAP=======================================================
@@ -45,9 +48,15 @@ pheatmap(mat_z,
 ##==============================================================================
 
 ##-------------Explicación resultados Heatmap expresión:
-#El heatmap de expresión génica estandarizada muestra patrones de coexpresión entre genes y heterogeneidad entre individuos. 
-#Mediante clustering jerárquico con enlace completo se identifican grupos de individuos con perfiles de expresión similares, 
-#así como conjuntos de genes que presentan patrones coordinados de sobre- e infraexpresión. 
+El heatmap de expresión génica estandarizada muestra patrones de coexpresión entre genes y heterogeneidad entre individuos. 
+Mediante clustering jerárquico con enlace completo se identifican grupos de individuos con perfiles de expresión similares, 
+así como conjuntos de genes que presentan patrones coordinados de sobre- e infraexpresión. 
+
+El heatmap de expresión génica estandarizada permitió visualizar patrones de coexpresión y diferencias entre los individuos analizados. 
+Este análisis exploratorio mostró la existencia de grupos de genes con comportamientos similares. 
+De forma complementaria, el heatmap de correlaciones Spearman entre genes y los seis primeros componentes principales ayudó a interpretar el PCA, 
+identificando qué genes contribuyen a cada componente. En conjunto, ambos heatmaps muestran coherencia entre los patrones de expresión observados 
+y la estructura capturada por el análisis de componentes principales. 
 
 
  
