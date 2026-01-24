@@ -432,7 +432,11 @@ tabla_resultados <- modelo_log %>%
   modify_caption("**Tabla 1. Regresión Logística para Obesidad Clínica**")
 
 tabla_resultados
+´´´
 
+Generamos la curva ROC
+
+```{r}
 # Generar Curva ROC
 # Se obtienen las probabilidades predichas por el modelo
 probabilidades <- predict(modelo_log, type = "response")
@@ -451,13 +455,13 @@ plot(curva_roc,
      xlab = "Specificity", 
      ylab = "Sensitivity"
      )
-
 ```
 
 EXPLICACIÓN DE RESULTADOS
 
 A partir de los resultados obtenidos, ninguno de los terciles tiene un p-valor < 0,05, por lo que ninguna variable explicativa tiene significancia estadística respecto al normopeso u obesidad.Esto significa que, con mayor probabilidad, los hallazgos de este estudio sean producto del azar. Esto puede ocurrir porque el tamaño de la muestra es muy pequeño y que el número de casos de obesidad es muy bajo. Además, los intervalos de onfianza (95% CI) en todas las variables son muy amplios, lo que indica una baja precisión del modelo; y aunque los resultados de OR en el tercer tercil de la Componente 1 y en el segundo tercil de la Componente 3 muestran un riesgo elevado, la evidencia estadística es muy débil. El resto de ORs son muy cercanos a 1, indicando que no hay asociación. Para solucionar estos problemas en el modelo, se requeriría aumentar el tamaño de la muestra para confirmar si esos componentes son realmente factores de riesgo importantes.
 Por otro lado, el valor AUC en la curva ROC es de 0.772, por lo que se puede considerar que tiene una capacidad predictiva aceptable o buena. La forma escalonada de la curva es un reflejo de que el número de eventos (casos de obesidad) es muy bajo. A pesar de esto, la curva ROC sugiere que los Componentes Principales y las variables incluidas sí tienen una señal biológica real para distinguir la obesidad, alcanzando una precisión global del 77%.
+
 
 
 
