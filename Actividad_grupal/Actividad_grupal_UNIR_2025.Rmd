@@ -273,20 +273,23 @@ df_pca <- df_pca %>%
   )
 ```
 
-Para representar tablas descriptivas, al no seguir los valores de expresión de genes una distribución normal, empleamos los estadísticos de mediana y rango intercuartílico.
+Para representar tablas descriptivas, al no seguir los valores de expresión de genes una distribución normal, empleamos los estadísticos de mediana y rango intercuartílico. Además, establecemos el rango de genes.
 
 ```{r}
 stats <- list(all_continuous()~"{median} ({p25}, {p75})")
+genes_cols <- df_pca %>% select(ADCY3:UHMK1) %>% names()
 ```
 
-Generamos las tablas individuales por cada Componente Principal.
+Generamos las tablas individuales por cada Componente Principal. 
+Forzamos el tipo 'continuous' para el rango de genes porque detecta valores con muchos decimales o muestras pequeñas como variables categóricas y no como numéricas.
 
 ```{r}
 # Componente Principal 1
 tabla_pc1 <- df_pca %>%
-  select(PC1_t, ADCY3:UHMK1) %>%  
+  select(PC1_t, all_of(genes_cols)) %>%  
   tbl_summary(
-    by = PC1_t,                
+    by = PC1_t,
+    type = list(all_of(genes_cols) ~ "continuous"),
     statistic = stats, 
     digits = all_continuous() ~ 1 
   ) %>%
@@ -297,9 +300,10 @@ tabla_pc1 <- df_pca %>%
 
 # Componente Principal 2
 tabla_pc2 <- df_pca %>%
-  select(PC2_t, ADCY3:UHMK1) %>%  
+  select(PC2_t, all_of(genes_cols)) %>%  
   tbl_summary(
-    by = PC2_t,                
+    by = PC2_t,
+    type = list(all_of(genes_cols) ~ "continuous"),
     statistic = stats, 
     digits = all_continuous() ~ 1 
   ) %>%
@@ -310,9 +314,10 @@ tabla_pc2 <- df_pca %>%
 
 # Componente Principal 3
 tabla_pc3 <- df_pca %>%
-  select(PC3_t, ADCY3:UHMK1) %>%  
+  select(PC3_t, all_of(genes_cols)) %>%  
   tbl_summary(
-    by = PC3_t,                
+    by = PC3_t,
+    type = list(all_of(genes_cols) ~ "continuous"),
     statistic = stats, 
     digits = all_continuous() ~ 1 
   ) %>%
@@ -456,6 +461,7 @@ EXPLICACIÓN DE RESULTADOS
 
 A partir de los resultados obtenidos, ninguno de los terciles tiene un p-valor < 0,05, por lo que ninguna variable explicativa tiene significancia estadística respecto al normopeso u obesidad.Esto significa que, con mayor probabilidad, los hallazgos de este estudio sean producto del azar. Esto puede ocurrir porque el tamaño de la muestra es muy pequeño y que el número de casos de obesidad es muy bajo. Además, los intervalos de onfianza (95% CI) en todas las variables son muy amplios, lo que indica una baja precisión del modelo; y aunque los resultados de OR en el tercer tercil de la Componente 1 y en el segundo tercil de la Componente 3 muestran un riesgo elevado, la evidencia estadística es muy débil. El resto de ORs son muy cercanos a 1, indicando que no hay asociación. Para solucionar estos problemas en el modelo, se requeriría aumentar el tamaño de la muestra para confirmar si esos componentes son realmente factores de riesgo importantes.
 Por otro lado, el valor AUC en la curva ROC es de 0.772, por lo que se puede considerar que tiene una capacidad predictiva aceptable o buena. La forma escalonada de la curva es un reflejo de que el número de eventos (casos de obesidad) es muy bajo. A pesar de esto, la curva ROC sugiere que los Componentes Principales y las variables incluidas sí tienen una señal biológica real para distinguir la obesidad, alcanzando una precisión global del 77%.
+
 
 
 
