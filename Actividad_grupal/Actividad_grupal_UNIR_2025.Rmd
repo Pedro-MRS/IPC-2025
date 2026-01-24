@@ -1,6 +1,6 @@
 ---
 title: "Resolución Actividad 3 máster Bioinformática UNIR (2025)"
-author: "Paula Damián Moral"
+author: "Grupo 12"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -336,7 +336,10 @@ tbl_merge(
 )
 ```
 
-EXPLICACIÓN DE RESULTADOS!
+EXPLICACIÓN DE RESULTADOS:
+PC1: Destacan los incrementos de expresión en ADCY3 y POMC, junto con una caída relevante en GPR151 hacia el tercer tercil.
+PC2: Presenta las variaciones más extremas de la tabla, con saltos drásticos de niveles negativos a positivos en CADM2 y NTRK2.
+PC3: Los cambios más potentes ocurren en SH2B1, que sube desde valores mínimos , y en FTO, que muestra un ascenso marcado en el último grupo o tercer tercil.
 
 # Paso 7: Regresión Logística
 
@@ -461,6 +464,7 @@ EXPLICACIÓN DE RESULTADOS
 
 A partir de los resultados obtenidos, ninguno de los terciles tiene un p-valor < 0,05, por lo que ninguna variable explicativa tiene significancia estadística respecto al normopeso u obesidad, por lo que los PCs no parecen predecir la obesidad de un individuo para esta muestra. Esto puede ocurrir porque el tamaño de la muestra es muy pequeño y que el número de casos de obesidad es muy bajo. Además, los intervalos de confianza (95% CI) en todas las variables son muy amplios, lo que indica una baja precisión del modelo; y aunque los resultados de OR en el tercer tercil de la Componente 1 y en el segundo tercil de la Componente 3 muestran un riesgo elevado, la evidencia estadística es muy débil. El resto de ORs son muy cercanos a 1, indicando que no hay asociación. Para solucionar estos problemas en el modelo, se requeriría aumentar el tamaño de la muestra para confirmar si esos componentes son realmente factores de riesgo importantes.
 Por otro lado, el valor AUC en la curva ROC es de 0.772, por lo que se puede considerar que tiene una capacidad predictiva aceptable o buena. La forma escalonada de la curva es un reflejo de que el número de eventos (casos de obesidad) es muy bajo. A pesar de esto, la curva ROC sugiere que los Componentes Principales y las variables incluidas sí tienen una señal biológica real para distinguir la obesidad, alcanzando una precisión global del 77%.
+
 
 
 
