@@ -24,7 +24,7 @@ A continuación, cargamos los datos.
 
 ```{r}
 
-df <- read_csv("Base de datos Los Simpson completa.csv") # HE REVERTIDO EL NOMBRE AL ORIGINAL, PARA QUE LA IMPORTACIÓN SEA INSTANTÁNEA PARA EL EVALUADOR
+df <- read_csv("Base de datos Los Simpson completa.csv")
 
 ```
 # Paso 1: Carga y limpieza de datos
@@ -79,7 +79,7 @@ summary(pca) # ESTO PODEMOS PRESENTARLO COMO TABLA ADICIONAL EN EL INFORME DE LA
 Además, podemos visualizar la varianza explicada por cada componente con la función `fvix_eig()`.
 
 ```{r}
-fviz_eig(pca, addlabels = TRUE, ylim = c(0, 50), 
+fviz_eig(pca, addlabels = TRUE, ylim = c(0, 15), 
          barfill = "steelblue", barcolor = "steelblue",
          title = "Varianza Explicada por Componente Principal")
 ```
@@ -322,6 +322,7 @@ tbl_merge(
   tab_spanner = c("**PC1**", "**PC2**", "**PC3**")
 )
 ```
+
 
 
 
