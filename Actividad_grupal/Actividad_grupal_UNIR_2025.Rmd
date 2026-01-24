@@ -253,30 +253,35 @@ De forma complementaria, el heatmap de correlaciones Spearman entre genes y los 
 
 # Paso 6 - Tablas descriptivas
 
-```{r}
-# Cálculo de percentiles para dividir los datos en tres grupos iguales
+Primero calculamos los percentiles para dividir los datos en tres grupos iguales.
 
+```{r}
 make_terciles <- function(x){
   q <- quantile(x, probs=c(1/3,2/3))
   cut(x, breaks=c(-Inf,q,Inf), labels=c("t1","t2","t3"))
 }
+```
 
-# Creación de variables de estratificación de Componentes Principales
+Creamos las variables de Componentes Principales divididas en terciles.
+
+```{r}
 df_pca <- df_pca %>%
   mutate(
     PC1_t = make_terciles(PC1),
     PC2_t = make_terciles(PC2),
     PC3_t = make_terciles(PC3)
   )
+```
 
-# Representación de tablas descriptivas 
+Para representar tablas descriptivas, al no seguir los valores de expresión de genes una distribución normal, empleamos los estadísticos de mediana y rango intercuartílico.
 
-# Como se comprueba al inicio, los genes no siguen distribución normal, por lo que se emplean los estadísticos de mediana y rango intercuartílico
-
+```{r}
 stats <- list(all_continuous()~"{median} ({p25}, {p75})")
+```
 
-# Creación de tablas individuales por cada Componente Principal
+Generamos las tablas individuales por cada Componente Principal.
 
+```{r}
 # Componente Principal 1
 tabla_pc1 <- df_pca %>%
   select(PC1_t, ADCY3:UHMK1) %>%  
@@ -315,38 +320,43 @@ tabla_pc3 <- df_pca %>%
     test = all_continuous() ~ "kruskal.test",
     pvalue_fun = ~ style_pvalue(.x, digits = 3)
   )
+```
 
-# Unión de tablas descriptivas de todos los PC
+Unimos las tablas descriptivas de todos los PC.
+
+```{r}
 tbl_merge(
   tbls = list(tabla_pc1, tabla_pc2, tabla_pc3),
   tab_spanner = c("**PC1**", "**PC2**", "**PC3**")
 )
 ```
 
-Se construye el modelo de regresióno logística mediante la función glm, donde la variable dependiente es metástasis (sí/no) y las variables predictoras son los terciles de los componentes principales obtenidos en el PCA y se escogen otras variables que pueden ser relevantes como el sexo y la edad.
+EXPLICACIÓN DE RESULTADOS!
+
+# Paso 7: Regresión Logística
+
+Construiremos un modelo de regresióno logística mediante la función `glm`, donde la variable dependiente es si el individuo presenta normopeso u obesidad, y las variables predictoras son los terciles de los componentes principales obtenidos en el PCA, además de escoger otras variables que pueden ser relevantes como el sexo y la edad.
+
+Primero, definimos una función para determinar si un individuo es normal u obeso.
 
 ```{r}
-clinico_obesos <- function (x) {
-  cut (x,breaks = c (-Inf, 29,99, Inf),
-      labels =c("Normopeso", "Obesidad"))
-  
-df_clean$pesoClinico <- clinico_obesos(df_clean$imc_kg_m2)
-}
-# 1. Definir la función correctamente
 clinico_obesos <- function(x) {
   cut(x, 
       breaks = c(-Inf, 29.99, Inf),
       labels = c("Normopeso", "Obesidad"))
 }
+```
 
-# 2. Aplicar la función al dataframe del modelo (df_pca)
-# Asegúrate de usar el punto (.) para decimales en 29.99
+Aplicamos la función al data frame del modelo (usamos el data frame `df_pca`)
+
+```{r}
 df_pca$pesoClinico <- clinico_obesos(df_pca$imc_kg_m2)
-
-# Verificar que se creó correctamente
 table(df_pca$pesoClinico)
+```
 
+Modificamos las variables a analizar del data frame con `mutate`.
 
+```{r}
 df_pca <- df_pca %>%
   mutate(
     pesoClinico = factor(pesoClinico, levels = c("Normopeso", "Obesidad")),
@@ -355,10 +365,17 @@ df_pca <- df_pca %>%
     PC2_t = relevel(factor(PC2_t), ref = "t1"),
     PC3_t = relevel(factor(PC3_t), ref = "t1")
   )
+```
 
-# Se asegura que la variable pesoClinico sea un factor (necesario para familia binomial)
+Nos aseguramos que la variable `pesoClinico` es un factor (necesario para analizarlo con la familia binomial).
+
+```{r}
 df_pca$pesoClinico <- as.factor(df_pca$pesoClinico)
+```
 
+Nos aseguramos también de que cada variable potencial a analizar sea de la clase correcta.
+
+```{r}
 df_pca$edad_anios <- as.numeric(as.character(df_pca$edad_anios))
 df_pca$sexo <- as.factor(df_pca$sexo)
 df_pca$etnicidad <- as.factor(df_pca$etnicidad)
@@ -366,23 +383,35 @@ df_pca$tabaco <- as.factor(df_pca$tabaco)
 df_pca$enfermedades <- as.factor(df_pca$enfermedades)
 df_pca$trastornos <- as.factor(df_pca$trastornos)
 df_pca$alcohol <- as.factor(df_pca$alcohol)
+```
 
+Generamos el modelo logístico.
+
+```{r}
 modelo_log <- glm(
   pesoClinico ~ PC1_t + PC2_t + PC3_t + edad_anios + sexo, 
   data = df_pca,
   family = binomial)
+```
 
+Observamos los resultados.
+
+```{r}
 summary(modelo_log)            # resumen del modelo (coeficientes y error estandar)
 confint(modelo_log)    # intervalos confianza coeficientes
 exp(coef(modelo_log))          # Odds Ratios para cada categoría frente a la de referencia
 exp(confint(modelo_log))    # Intervalos de confianza de las Odds Ratios
+```
 
-tabla_resultados <- exp (cbind (OR=coef(modelo_log), confint (modelo_log)))
-print (tabla_resultados)
+Generamos la tabla de resultados.
 
+```{r}
+tabla_resultados <- exp(cbind(OR = coef(modelo_log), confint(modelo_log)))
+print(tabla_resultados)
+```
+Generamos una tabla con los datos de la regresión logística, utilizando varios modelos de ajuste lógicos y razonables, teniendo en cuenta identificación de variables confusoras.
 
-# Se genera una tabla con los datos de la regresión logística, utilizando varios modelos de ajuste lógicos y razonables, teniendo en cuenta identificación de variables confusoras.
-
+```{r}
 tabla_resultados <- modelo_log %>%
   tbl_regression(
     exponentiate = TRUE,              # Convierte log-odds a Odds Ratio (OR)
@@ -402,11 +431,10 @@ tabla_resultados <- modelo_log %>%
     modify_header(label = "**Variable**", estimate = "**OR**") %>%
   modify_caption("**Tabla 1. Regresión Logística para Obesidad Clínica**")
 
-
-# 3. VISUALIZAR
 tabla_resultados
 ```
 
+EXPLICACIÓN DE RESULTADOS
 
 
 
