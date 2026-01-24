@@ -323,6 +323,90 @@ tbl_merge(
 )
 ```
 
+Se construye el modelo de regresióno logística mediante la función glm, donde la variable dependiente es metástasis (sí/no) y las variables predictoras son los terciles de los componentes principales obtenidos en el PCA y se escogen otras variables que pueden ser relevantes como el sexo y la edad.
+
+```{r}
+clinico_obesos <- function (x) {
+  cut (x,breaks = c (-Inf, 29,99, Inf),
+      labels =c("Normopeso", "Obesidad"))
+  
+df_clean$pesoClinico <- clinico_obesos(df_clean$imc_kg_m2)
+}
+# 1. Definir la función correctamente
+clinico_obesos <- function(x) {
+  cut(x, 
+      breaks = c(-Inf, 29.99, Inf),
+      labels = c("Normopeso", "Obesidad"))
+}
+
+# 2. Aplicar la función al dataframe del modelo (df_pca)
+# Asegúrate de usar el punto (.) para decimales en 29.99
+df_pca$pesoClinico <- clinico_obesos(df_pca$imc_kg_m2)
+
+# Verificar que se creó correctamente
+table(df_pca$pesoClinico)
+
+
+df_pca <- df_pca %>%
+  mutate(
+    pesoClinico = factor(pesoClinico, levels = c("Normopeso", "Obesidad")),
+    pesoClinico = relevel(pesoClinico, ref = "Normopeso"),
+    PC1_t = relevel(factor(PC1_t), ref = "t1"),
+    PC2_t = relevel(factor(PC2_t), ref = "t1"),
+    PC3_t = relevel(factor(PC3_t), ref = "t1")
+  )
+
+# Se asegura que la variable pesoClinico sea un factor (necesario para familia binomial)
+df_pca$pesoClinico <- as.factor(df_pca$pesoClinico)
+
+df_pca$edad_anios <- as.numeric(as.character(df_pca$edad_anios))
+df_pca$sexo <- as.factor(df_pca$sexo)
+df_pca$etnicidad <- as.factor(df_pca$etnicidad)
+df_pca$tabaco <- as.factor(df_pca$tabaco)
+df_pca$enfermedades <- as.factor(df_pca$enfermedades)
+df_pca$trastornos <- as.factor(df_pca$trastornos)
+df_pca$alcohol <- as.factor(df_pca$alcohol)
+
+modelo_log <- glm(
+  pesoClinico ~ PC1_t + PC2_t + PC3_t + edad_anios + sexo, 
+  data = df_pca,
+  family = binomial)
+
+summary(modelo_log)            # resumen del modelo (coeficientes y error estandar)
+confint(modelo_log)    # intervalos confianza coeficientes
+exp(coef(modelo_log))          # Odds Ratios para cada categoría frente a la de referencia
+exp(confint(modelo_log))    # Intervalos de confianza de las Odds Ratios
+
+tabla_resultados <- exp (cbind (OR=coef(modelo_log), confint (modelo_log)))
+print (tabla_resultados)
+
+
+# Se genera una tabla con los datos de la regresión logística, utilizando varios modelos de ajuste lógicos y razonables, teniendo en cuenta identificación de variables confusoras.
+
+tabla_resultados <- modelo_log %>%
+  tbl_regression(
+    exponentiate = TRUE,              # Convierte log-odds a Odds Ratio (OR)
+    conf.int = TRUE,                  # Muestra intervalos de confianza
+    label = list(
+      PC1_t ~ "Terciles Componente 1",
+      PC2_t ~ "Terciles Componente 2",
+      PC3_t ~ "Terciles Componente 3",
+      edad_anios ~ "Edad (años)",
+      sexo ~ "Sexo"
+      )
+  ) %>%
+  bold_labels() %>%
+  italicize_levels() %>%
+  add_n(location = "level") %>%       # Añade el N por cada categoría
+  add_nevent(location = "level") %>%  # Añade cuántos obesos hay por categoría
+    modify_header(label = "**Variable**", estimate = "**OR**") %>%
+  modify_caption("**Tabla 1. Regresión Logística para Obesidad Clínica**")
+
+
+# 3. VISUALIZAR
+tabla_resultados
+```
+
 
 
 
