@@ -382,3 +382,68 @@ fviz_dend(hclust_model,
 #################################################################
 #################################################################
 
+# Preparamos los datos para ser analizados con métodos de aprendizaje automatizado supervisado
+
+# Establecemos una semilla para poder replicar los resultados
+set.seed(1234)
+
+# Cargamos la librería 'caret' para usar funciones de partición de datos de entrenamiento y test, y acceder a los modelos de ML
+library(caret)
+
+# Cargamos la librería 'pROC' para calcular la curva ROC
+library(pROC)
+
+# Ceneramos una matriz de expresión con una columna con la clase de tumor
+df_model <- as.data.frame(df_final[, -c(1,2)]) %>%
+  mutate(Clase = df_final$clase)
+
+# Convertimos la columna clase en un factor
+df_model$Clase <- as.factor(df_model$Clase)
+
+# Particionamos los datos en sets de Training (70 % de los individuos) y Testing (30 % de individuos)
+idx <- createDataPartition(df_model$Clase, p = 0.7, list = FALSE)
+
+train <- df_model[idx, ]
+test  <- df_model[-idx, ]
+
+# Usaremos los datos train y test para entrenar modelos de aprendizaje supervisado
+
+#################################################################
+##                     X. RANDOM FOREST                        ##
+#################################################################
+
+# Generamos un modelo de Random Forest para predecir la variable clase
+rf_fit <- train(Clase ~ ., 
+                data = train,
+                method = "rf",
+                trControl = trainControl(method = "cv", number = 10),
+                preProcess = c("center", "scale"),
+                tuneLength = 10,
+                importance = TRUE
+                )
+
+rf_fit
+
+# Calculamos las predicciones para los datos test
+rf_predictions <- predict(rf_fit,
+                          newdata = test
+                          )
+
+table(rf_predictions) # clases predichas por el RF
+table(test$Clase)     # clases reales para datos test
+
+# Comparamos nuestras predicciones con la variable Diagnosis mediante una 
+# matriz de confusión:
+confusionMatrix(
+  rf_predictions,
+  test$Clase
+)
+
+# Calculamos la probabilidad predicha para cada individuo de pertenecer a una clase de tumor
+rf_probabilities <- predict(
+  rf_fit,
+  newdata = test,
+  type = "prob"
+)
+
+rf_probabilities
