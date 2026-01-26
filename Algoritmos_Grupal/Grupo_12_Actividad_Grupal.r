@@ -340,8 +340,8 @@ df_final_scale <- scale(df_kmeans)  # Normalización z-score
 #   algorithm: varias opciones (Hartingan-wong por defecto)
 
 
-# k=3
-kmeans.result <- kmeans(df_final_scale, centers = 3, iter.max = 100, nstart = 25)
+# k=5
+kmeans.result <- kmeans(df_final_scale, centers = 5, iter.max = 100, nstart = 25)
 
 # Visualizacion
 fviz_cluster(kmeans.result, df_final_scale, 
@@ -358,7 +358,7 @@ fviz_cluster(kmeans.result, df_final_scale,
 # Realizamos el análisis cluster para agrupar las muestras en racimos (clusters): 
 # primero calculando la matriz de distancias euclídeas con dist(method = "euclidean"),
 # después se genera el dendrograma con el método de Ward's D con hclust(method = "ward.D")
-hclust_model <- df_final %>%
+hclust_model <- df_final_scale %>%
                 dist(method = "euclidean") %>% 
                 hclust(method = "ward.D")
 
