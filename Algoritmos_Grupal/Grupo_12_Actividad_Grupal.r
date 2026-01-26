@@ -446,4 +446,43 @@ rf_probabilities <- predict(
   type = "prob"
 )
 
-rf_probabilities
+rf_probabilities # clases predichas, pero en formato de probabilidad
+
+# Generamos la curva ROC, esta vez usamos multiclass.roc() para poder comparar entre más de dos clases 
+rf_roc <- multiclass.roc(
+  response  = test$Clase,
+  predictor = as.numeric(test$Clase)
+)
+
+# Representamos gráficamente las curvas ROC cuando comparamos con AGH
+plot.roc(
+  rf_roc$rocs[[1]],
+  col  = "red",
+  lwd  = 2,
+  main = "Curva ROC del modelo RF"
+  )
+
+plot.roc(
+  rf_roc$rocs[[2]],
+  col  = "blue",
+  add = TRUE,
+  lwd = 2
+  )
+
+plot.roc(
+  rf_roc$rocs[[3]],
+  col  = "green",
+  add = TRUE,
+  lwd = 2
+  )
+
+plot.roc(
+  rf_roc$rocs[[4]],
+  col  = "orange",
+  add = TRUE,
+  lwd = 2
+  )
+
+# Calculamos el AUC
+rf_auc <- auc(rf_roc)
+cat("AUC Random Forest (raw):", rf_auc, "\n")
