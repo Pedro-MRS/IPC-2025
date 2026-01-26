@@ -210,7 +210,14 @@ colnames(mds_df) <- c("Dim1", "Dim2", "Dim3")
 # Añadir etiquetas de clase de tumores
 mds_df$clase_tumores <- df_final$clase
 
+# Graficar MDS en 3D
+fig <- plot_ly(mds_df, x = ~Dim1, y = ~Dim2, z = ~Dim3, 
+               color = ~clase_tumores, colors = "Set1", 
+               marker = list(size = 4))
 
+# Mostrar el gráfico
+
+fig
 
 #################################################################
 ##          2. MÉTODO REDUCCIÓN DIMENSIONALIDAD t-SNE          ##
