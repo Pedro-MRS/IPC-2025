@@ -86,6 +86,11 @@ cat("Columnas ahora:", ncol(df_final), "\n")
 
 boxplot(df[, 3:13], main = "Boxplot de los 10 primeros genes")
 
+#################################################################
+#################################################################
+##            MÉTODOS DE APRENDIZAJE NO SUPERVISADO            ##
+#################################################################
+#################################################################
 
 
 #################################################################
@@ -341,5 +346,32 @@ fviz_cluster(kmeans.result, df_final_scale,
 
 #################################################################
 ##          5. MÉTODO CLUSTERING JERARQUICO                    ##
+#################################################################
+
+# Realizamos el análisis cluster para agrupar las muestras en racimos (clusters): 
+# primero calculando la matriz de distancias euclídeas con dist(method = "euclidean"),
+# después se genera el dendrograma con el método de Ward's D con hclust(method = "ward.D")
+hclust_model <- df_final %>%
+                dist(method = "euclidean") %>% 
+                hclust(method = "ward.D")
+
+# Generamos paleta de colores para las clases
+colors <- rainbow(5)
+
+# Representamos el dendrograma gráficamente
+fviz_dend(hclust_model,
+          k = 5,
+          palette = colors,
+          main = "Dist. Euclídea, Ward's D",
+          xlab = "Muestras",
+          ylab = "Distancia",
+          color_labesls_by_k = TRUE) +
+  theme_classic()
+
+
+#################################################################
+#################################################################
+##              MÉTODOS DE APRENDIZAJE SUPERVISADO             ##
+#################################################################
 #################################################################
 
