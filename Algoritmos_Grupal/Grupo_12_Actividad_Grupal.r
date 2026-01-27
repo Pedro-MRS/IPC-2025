@@ -15,14 +15,14 @@ setwd("C:/Users/laura/Documents/Unir/Algoritmos/ACTIVIDAD GRUPAL")
 # Carga de librerias
 
 library(tidyverse)   # Libreria analisis de datos
-library(dplyr)       # Libreria para hacer la representación gráfica
+library(ggplot2)       # Libreria para hacer la representación gráfica
 library(stats)       # Libreria para el PCA
 library(plotly)      # Libreria para MDS en 3D
 library(Rtsne)       # Libreria para el t-SNE
 library(uwot)        # Libreria para UMAP
 library(RDRToolbox)  # Libreria para Isomap
 library (factoextra) # Libreria para clustering k-means
-library(ggplot2)     # Libreria para hacer la representación gráfica
+library(caret)       # Librería para usar funciones de partición de datos de entrenamiento y test, y acceder a los modelos de ML
 
 # Generar dataframe
 
@@ -486,3 +486,36 @@ plot.roc(
 # Calculamos el AUC
 rf_auc <- auc(rf_roc)
 cat("AUC Random Forest (raw):", rf_auc, "\n")
+
+
+#################################################################
+##                     X. SVM MODEL LINEAL                    ##
+#################################################################
+
+# Generamos un modelo de SVM Lineal para predecir la variable clase
+
+svmModelLineal <- train(Clase ~.,
+                        data = train,
+                        method = "svmLinear",
+                        trControl = trainControl(method = "cv", number = 10),
+                        preProcess = c("center", "scale"),
+                        tuneGrid = expand.grid(C = seq(0, 2, length = 20)),
+                        prob.model = TRUE) 
+svmModelLineal
+
+plot(svmModelLineal)
+
+# Calculo de la precisión del modelo en el conjunto de prueba utilizando el modelo entrenado
+# Se usa el modelo entrenado para predecir las etiquetas del conjunto de prueba
+
+svm_predictions <- predict(svmModelLineal, newdata = test )
+svm_predictions
+
+# Evaluacion de la precisión del modelo utilizando la matriz de confusión
+
+confusionMatrix(svm_predictions, test$Clase)
+
+# SVM lineal. Calculo de las probabilidades del modelo de que sea la clase correcta
+
+svm_probabilities <- predict(svmModelLineal, newdata = test, type = "prob")
+svm_probabilities
