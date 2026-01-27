@@ -559,3 +559,55 @@ ggplot(df_roc, aes(x = FPR, y = TPR, color = Clase)) +
   theme(legend.title = element_blank(),
         plot.title = element_text(face = "bold")) +
   scale_color_brewer(palette = "Set1")
+
+###################################################################
+##                     X. k-NEAREST NEIGHBORS                    ##
+###################################################################
+
+model_knn <- train(
+  Clase ~ .,
+  data=train,
+  method="knn",
+  trControl=trainControl(method = "cv", number=10),
+  preProcess=c("center", "scale"),
+  tuneLength=30
+)
+
+# Se aplica el modelo entrenado con los datos nuevos para obtener las predicciones para evaluar cómo se comporta el modelo
+predicciones <- predict(model_knn, newdata=test)
+
+# Con las predicciones previas se calcula la matriz de confusión, que compara las predicciones con valores reales
+confusionMatrix(predicciones, test$Clase)
+
+# Se representa la precisión del modelo en base al número de vecinos
+plot(model_knn)
+
+# Se representa la curva ROC para evaluar el modelo planteado
+predicciones_prob <- predict(model_knn, newdata=test, type="prob")
+
+roc_AGH <- plot(roc(test$Clase == "AGH", predicciones_prob[,1]),
+                col="red",
+                lwd=2,
+                main = "Curvas ROC por categorías"
+                )
+roc_CFB <- plot(roc(test$Clase == "CFB", predicciones_prob[,2]),
+                col="blue",
+                add=TRUE
+                )
+roc_CGC <- plot(roc(test$Clase == "CGC", predicciones_prob[,3]),
+                col="green",
+                add=TRUE
+)
+roc_CHC <- plot(roc(test$Clase == "CHC", predicciones_prob[,4]),
+                col="orange",
+                add=TRUE
+)
+roc_HPB <- plot(roc(test$Clase == "HPB", predicciones_prob[,5]),
+                col="purple",
+                add=TRUE
+)
+
+legend("bottomright",
+       legend=c("AGH", "CFB", "CGC", "CHC", "HPB"),
+       col=c("red", "blue", "green", "orange", "purple"),
+       lwd=2)
