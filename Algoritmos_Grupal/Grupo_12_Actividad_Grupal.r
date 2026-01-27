@@ -519,3 +519,43 @@ confusionMatrix(svm_predictions, test$Clase)
 
 svm_probabilities <- predict(svmModelLineal, newdata = test, type = "prob")
 svm_probabilities
+
+### Curva ROC de SVM Lineal
+# De definen las clases
+clases_nombres <- levels(test$Clase) # CHC, CGC, HPB, CFB, AGH
+
+# Se genera un dataframe para almacenar los puntos de la curva
+df_roc <- data.frame()
+
+# Bucle para calcular la curva de cada clase frente a las demás
+for (clase in clases_nombres) {
+  # Creamos un vector binario (1 para la clase actual, 0 para todas las demás)
+  observado_binario <- ifelse(test$Clase == clase, 1, 0)
+  
+  # Seleccionamos la probabilidad de esa clase específica
+  prob_clase <- svm_probabilities[, clase]
+  
+  # Generamos el objeto roc
+  roc_obj <- roc(observado_binario, prob_clase, quiet = TRUE)
+  
+  # Guardamos los datos para ggplot
+  df_temp <- data.frame(
+    FPR = 1 - roc_obj$specificities,
+    TPR = roc_obj$sensitivities,
+    Clase = paste0(clase, " (AUC: ", round(auc(roc_obj), 2), ")")
+  )
+  df_roc <- rbind(df_roc, df_temp)
+}
+
+# Graficamos
+ggplot(df_roc, aes(x = FPR, y = TPR, color = Clase)) +
+  geom_line(linewidth = 1) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "grey50") +
+  labs(title = "Curvas ROC por Clase - SVM Lineal",
+       subtitle = "Evaluación de capacidad diagnóstica (One-vs-Rest)",
+       x = "Especificidad",
+       y = "Sensibilidad") +
+  theme_minimal() +
+  theme(legend.title = element_blank(),
+        plot.title = element_text(face = "bold")) +
+  scale_color_brewer(palette = "Set1")
