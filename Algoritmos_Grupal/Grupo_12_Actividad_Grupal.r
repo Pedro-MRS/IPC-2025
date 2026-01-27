@@ -520,45 +520,41 @@ confusionMatrix(svm_predictions, test$Clase)
 svm_probabilities <- predict(svmModelLineal, newdata = test, type = "prob")
 svm_probabilities
 
-### Curva ROC de SVM Lineal
-# De definen las clases
-clases_nombres <- levels(test$Clase) # CHC, CGC, HPB, CFB, AGH
+### Curva ROC de SVM Lineal y AUC
+# Clase AGH
+rocSVM_AGH <- roc(test$Clase == "AGH", svm_probabilities[, "AGH"])
+plot(rocSVM_AGH, col="red", lwd=2, legacy.axes=TRUE,
+     main = paste("Curva ROC: Clase AGH\nAUC =", round(auc(rocSVM_AGH), 4)),
+     xlab = "Especificidad",
+     ylab = "Sensibilidad")
 
-# Se genera un dataframe para almacenar los puntos de la curva
-df_roc <- data.frame()
+# Clase CFB
+rocSVM_CFB <- roc(test$Clase == "CFB", svm_probabilities[, "CFB"])
+plot(rocSVM_CFB, col="blue", lwd=2, legacy.axes=TRUE,
+     main = paste("Curva ROC: Clase CFB\nAUC =", round(auc(rocSVM_CFB), 4)),
+     xlab = "Especificidad",
+     ylab = "Sensibilidad")
 
-# Bucle para calcular la curva de cada clase frente a las demás
-for (clase in clases_nombres) {
-  # Creamos un vector binario (1 para la clase actual, 0 para todas las demás)
-  observado_binario <- ifelse(test$Clase == clase, 1, 0)
-  
-  # Seleccionamos la probabilidad de esa clase específica
-  prob_clase <- svm_probabilities[, clase]
-  
-  # Generamos el objeto roc
-  roc_obj <- roc(observado_binario, prob_clase, quiet = TRUE)
-  
-  # Guardamos los datos para ggplot
-  df_temp <- data.frame(
-    FPR = 1 - roc_obj$specificities,
-    TPR = roc_obj$sensitivities,
-    Clase = paste0(clase, " (AUC: ", round(auc(roc_obj), 2), ")")
-  )
-  df_roc <- rbind(df_roc, df_temp)
-}
+# Clase CGC
+rocSVM_CGC <- roc(test$Clase == "CGC", svm_probabilities[, "CGC"])
+plot(rocSVM_CGC, col="green", lwd=2, legacy.axes=TRUE,
+     main = paste("Curva ROC: Clase CGC\nAUC =", round(auc(rocSVM_CGC), 4)),
+     xlab = "Especificidad",
+     ylab = "Sensibilidad")
 
-# Graficamos
-ggplot(df_roc, aes(x = FPR, y = TPR, color = Clase)) +
-  geom_line(linewidth = 1) +
-  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "grey50") +
-  labs(title = "Curvas ROC por Clase - SVM Lineal",
-       subtitle = "Evaluación de capacidad diagnóstica (One-vs-Rest)",
-       x = "Especificidad",
-       y = "Sensibilidad") +
-  theme_minimal() +
-  theme(legend.title = element_blank(),
-        plot.title = element_text(face = "bold")) +
-  scale_color_brewer(palette = "Set1")
+# Clase CHC
+rocSVM_CHC <- roc(test$Clase == "CHC", svm_probabilities[, "CHC"])
+plot(rocSVM_CHC, col="orange", lwd=2, legacy.axes=TRUE,
+     main = paste("Curva ROC: Clase CHC\nAUC =", round(auc(rocSVM_CHC), 4)),
+     xlab = "Especificidad",
+     ylab = "Sensibilidad")
+
+# Clase HPB
+rocSVM_HPB <- roc(test$Clase == "HPB", svm_probabilities[, "HPB"])
+plot(rocSVM_HPB, col="purple", lwd=2, legacy.axes=TRUE,
+     main = paste("Curva ROC: Clase HPB\nAUC =", round(auc(rocSVM_HPB), 4)),
+     xlab = "Especificidad",
+     ylab = "Sensibilidad")
 
 ###################################################################
 ##                     X. k-NEAREST NEIGHBORS                    ##
