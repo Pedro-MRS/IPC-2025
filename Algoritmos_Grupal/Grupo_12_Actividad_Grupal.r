@@ -15,14 +15,15 @@ setwd("C:/Users/laura/Documents/Unir/Algoritmos/ACTIVIDAD GRUPAL")
 # Carga de librerias
 
 library(tidyverse)   # Libreria analisis de datos
-library(ggplot2)       # Libreria para hacer la representación gráfica
+library(ggplot2)     # Libreria para hacer la representación gráfica
 library(stats)       # Libreria para el PCA
 library(plotly)      # Libreria para MDS en 3D
 library(Rtsne)       # Libreria para el t-SNE
 library(uwot)        # Libreria para UMAP
 library(RDRToolbox)  # Libreria para Isomap
-library (factoextra) # Libreria para clustering k-means
+library(factoextra)  # Libreria para clustering k-means
 library(caret)       # Librería para usar funciones de partición de datos de entrenamiento y test, y acceder a los modelos de ML
+library(kernlab)     # Librería que es dependencia del SVM de caret
 
 # Generar dataframe
 
@@ -34,23 +35,21 @@ colnames(clases) <- c("ID", "clase")
 df <- cbind(clases, expresion)     #  Combinar todo en un solo DataFrame
 rownames(df) <- df$ID # Establecer el ID de la muestra como nombre de fila
 
-write_csv(df, "expresion_genica.csv")     # Se guarda el dataframe como .csv
-
 # Se evalua la existencia de NAS
 anyNA(df)
 na_counts <- colSums((is.na(df)))
 na_counts
 
-# Se comprueba si hay valores 0
-any(df == 0)
-# Se han encontrado valores 0, que pueden ser por errores en la toma de datos o porque son genes
-# que no se han expresado, y, debido a esta ultima circunstancia, se cuenta con ellos
-# para realizar el análisis
+# Los datos no presentan valores perdidos, por lo que no es necesario imputar datos
 
+# Se comprueba si hay muestras con alto contenido en valores 0
 zero_counts <- colSums(df == 0)
 zero_counts
-# Graficamos los estadísticos
 
+# Los valores de cero indican la no detección de expresión para un gen en una muestra,
+# por lo que se cuenta con ellos para realizar el análisis
+
+# Graficamos la presencia de valores cero
 zero_df <- data.frame(
   Variable = names(zero_counts),
   Zeros = as.numeric(zero_counts)
@@ -63,15 +62,22 @@ ggplot(zero_df, aes(x = Variable, y = Zeros, fill = Variable)) +
   theme_minimal() +
   theme(legend.position = "none")  # Oculta la leyenda
 
-# Se calcula la varianza de cada gen(excluyendo las dos primeras columnas)
+# Aunque hay muestras con alto valor de valores cero, quizás sean genes que se 
+# expresen en ciertos individuos, y contribuyen a la variabilidad biológica de los datos,
+# por lo que mantenemos todas las muestras
+
+# Comprobamos qué genes tienen varianza de cero (es decir, tienen un valor constante a lo largo de todas las muestras)
+# Se calcula la varianza de cada gen (excluyendo las dos primeras columnas)
 varianzas <- apply(df[, -c(1, 2)], 2, var)
 
 # Identificacion de cuantos genes tienen varianza cero
 var_genes <- names(varianzas[varianzas == 0])
 cat("Se han encontrado", length(var_genes), "genes con varianza cero.")
 print(head(var_genes, 10))
+
 # Se eliminan los genes con varianza 0 y se genera un nuevo dataframe sin esos genes
-# Esto es necesario para poder realizar metodos de reduccion de dimensionalidad, ya que los genes se van a ordenar en función de su varianza 
+# Esto es necesario para poder realizar metodos de reducción de dimensionalidad, 
+# ya que los genes sin variación no nos aportan información.
 # Mantenemos las columnas 1 y 2 (ID y Clase) y solo los genes con varianza > 0
 # Creamos el dataframe final manteniendo solo genes con varianza > 0
 # Mantenemos columnas 1 y 2 (ID y clase) y filtramos el resto
@@ -94,133 +100,7 @@ boxplot(df[, 3:13], main = "Boxplot de los 10 primeros genes")
 
 
 #################################################################
-##          0. MÉTODO REDUCCIÓN DIMENSIONALIDAD PCA            ##
-#################################################################
-
-### Funcion prcomp()
-#   df_final: conjunto de datos
-#   center: si queremos que las variables esten centradas en cero
-#   scale: si queremos que las variables tengan varianza 1
-
-# Calculo de componentes principales con a funcion prcomp
-# Se ejecuta PCA excluyendo las columnas 1 y 2 que corresponden a ID y clase
-pca.results <- prcomp(df_final[, -c(1, 2)], center = TRUE, scale. = TRUE)
-
-# Ver resumen de PCA
-summary(pca.results)
-
-# Resultado de las componentes principales
-pca.df <- data.frame(pca.results$x)
-
-# Varianza de los genes en los componenetes principales (cuadrado de la desviacion tipica)
-varianzas <- pca.results$sdev^2
-
-# Total de la varianza de los datos
-total.varianza <- sum(varianzas)
-
-# Varianza explicada por cada componente principal
-varianza.explicada <- varianzas/total.varianza
-
-# Se calcula la varianza acumulada
-varianza.acumulada <- cumsum(varianza.explicada)
-
-# Se toma el numero de componentes principales que explican el 90% de la varianza
-n.pc <- min(which(varianza.acumulada > 0.90))
-
-# Etiquetas de los ejes del gráfico
-x_label <- paste0(paste('PC1', round(varianza.explicada[1] * 100, 2)), '%')
-y_label <- paste0(paste('PC2', round(varianza.explicada[2] * 100, 2)), '%')
-
-# Representación gráfica de las primeras dos componentes principales respecto a los datos
-
-ggplot(pca.df, aes(x=PC1, y=PC2, color=df_final$clase)) +
-  geom_point(size=3) +
-  scale_color_manual(values=c('red', 'blue', 'green', 'orange', 'purple')) +
-  labs(title='PCA - Clases tumores hepáticos', x=x_label, y=y_label, color='Grupo') +
-  theme_classic() +
-  theme(panel.grid.major = element_line(color="gray90"), panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "gray95"), plot.title = element_text(hjust = 0.5))
-
-
-
-#################################################################
-##          1. MÉTODO REDUCCIÓN DIMENSIONALIDAD MDS            ##
-#################################################################
-
-# Funcion cmdscale()
-#   d: matriz de distancias (usaremos la funcion dist)
-#   k: numero que indica el tamaño final de los datos (max num de variables)
-#   eig: si calculamos autovalores de las variables. Nos sirve para el calculo 
-#        de la varianza explicada, es decir, para coger las columnas de mayor
-#        variabilidad
-#   x.ret: para devolver la matriz de distancias que calcule el algoritmo
-
-#   points: dataframe de tamaño k que representa las nuevas coordenadas
-#   eig: vector con los autovalores para elegir el numero de dimensiones
-
-
-# Se utiliza la funcion dist para calcular la matriz de distancias euclideas
-# matriz NxN de distancias entre todos los puntos
-
-distances <- dist(df_final, method = 'euclidean')
-
-# Utilizamos la funcon cmdscale para realizar el MSD
-
-mds.results <- cmdscale(distances, eig=TRUE, k=2, x.ret=TRUE)
-
-# Calculamos la varianza explicada
-
-varianza.explicada <- mds.results$eig/sum(mds.results$eig) * 100
-
-# Sacamos en un dataframe los puntos del mds
-
-mds.df <- data.frame(mds.results$points)
-
-
-# Grafico
-
-ggplot(mds.df, aes(x=X1, y=X2, color=df_final$clase)) +
-  geom_point(size=3) + 
-  scale_color_manual(values=c("red", "blue", "green", "orange", "purple")) +
-  labs(title="MDS - Clases tumores hepáticos", x="Dimension 1 (X1)", y="Dimension 2 (X2)",color = "Grupo") +
-  theme_classic() + 
-  theme(panel.grid.major = element_line(color = "gray90"), panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "gray95"), plot.title=element_text(hjust=0.5))
-
-###############################
-# Grafico varianza n-dim MDS  #
-###############################
-
-# Lectura de datos
-datos_raw <- read.csv("expresion_genica.csv")
-
-# Guardado en un dataframe
-data <- sapply(datos_raw[, 3:ncol(datos_raw)], as.numeric)
-distancia <- dist(data)
-
-# Aplicar MDS a 3 dimensiones
-
-mds_result <- cmdscale(distancia, k = 3)
-
-# Convertir el resultado a un data frame
-
-mds_df <- as.data.frame(mds_result)
-colnames(mds_df) <- c("Dim1", "Dim2", "Dim3")
-
-# Añadir etiquetas de clase de tumores
-mds_df$clase_tumores <- df_final$clase
-
-# Graficar MDS en 3D
-fig <- plot_ly(mds_df, x = ~Dim1, y = ~Dim2, z = ~Dim3, 
-               color = ~clase_tumores, colors = "Set1", 
-               marker = list(size = 4))
-
-# Mostrar el gráfico
-
-fig
-
-#################################################################
-##          2. MÉTODO REDUCCIÓN DIMENSIONALIDAD t-SNE          ##
+##          1. MÉTODO REDUCCIÓN DIMENSIONALIDAD t-SNE          ##
 #################################################################
 
 # Funcion Rtsne()
@@ -245,10 +125,8 @@ tsne_graf <- ggplot(tsne_result, aes(x = X1, y = X2, color = df_final$clase)) +
 # Mostrar el gráfico
 tsne_graf
 
-
-
 #################################################################
-##          3. MÉTODO REDUCCIÓN DIMENSIONALIDAD UMAP           ##
+##          2. MÉTODO REDUCCIÓN DIMENSIONALIDAD UMAP           ##
 #################################################################
 
 # Funcion umap()
@@ -264,7 +142,7 @@ tsne_graf
 
 #     Y resultado
 
-umap.results <- umap(df_final, n_neighbors=0.2 * nrow(data),
+umap.results <- umap(df_final, n_neighbors=0.2 * nrow(df_final),
                      n_components = 2, min_dist = 0.1, local_connectivity=1, 
                      ret_model = TRUE, verbose = TRUE)
 
@@ -285,44 +163,7 @@ ggplot(umap.df, aes(x = X1, y = X2, color = df_final$clase)) +
 
 
 #################################################################
-##          4. MÉTODO REDUCCIÓN DIMENSIONALIDAD ISOMAP         ##
-#################################################################
-
-# Funcion Isomap()
-#   data -> datos (matriz) sobre los que haremos reduccion de dimensionalidad
-#   dim -> dimensiones de las columnas del espacio reducido
-#   k -> numero de vecinos cercanos a cada punto. A mayor k mayor computacion
-#   potResiduals -> devuelve la varianza explicada por las diferentes dimensiones
-
-#   Si se ha elegido una unica dimension devuelve una matriz
-#   Si se ha elegido un vector de dimensiones devolvera una matriz por cada elemento del vector
-
-# Lectura de datos
-datos_raw <- read.csv("expresion_genica.csv")
-
-# Guardado en un dataframe
-data <- sapply(datos_raw[, 3:ncol(datos_raw)], as.numeric)
-
-# Calculamos isomap de 1 a 10 dimensiones y con 5 vecinos (y 30?)
-isomap.results = Isomap(data=data, dims=1:10, k=15, plotResiduals=TRUE)
-
-# Dataframe con los puntos que queremos dibujar en el plano 2D
-#     (elegiriamos otro si queremos otra dimension)
-isomap.df <- data.frame(isomap.results$dim2) 
-
-# Graficamos
-ggplot(isomap.df, aes(x = X1, y = X2, color = df_final$clase)) +
-  geom_point(size = 3) +
-  scale_color_manual(values = c("red", "blue", "green", "orange", "purple")) +
-  labs(title = "Isomap - Clases tumores hepáticos", x = 'Dim 1', y = 'Dim 2', color = "Grupo") +
-  theme_classic() +
-  theme(panel.grid.major = element_line(color = "gray90"), panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "gray95"), plot.title=element_text(hjust=0.5))
-
-
-
-#################################################################
-##          5. MÉTODO CLUSTERING NO JERÁRQUICO K-MEANS         ##
+##          3. MÉTODO CLUSTERING NO JERÁRQUICO K-MEANS         ##
 #################################################################
 
 # Seleccionar desde la columna 3 hasta la última columna que corresponde a los genes
@@ -352,7 +193,7 @@ fviz_cluster(kmeans.result, df_final_scale,
   theme(plot.title = element_text(hjust = 0.5, margin = margin(b = -10)))
 
 #################################################################
-##          5. MÉTODO CLUSTERING JERARQUICO                    ##
+##          4. MÉTODO CLUSTERING JERARQUICO                    ##
 #################################################################
 
 # Realizamos el análisis cluster para agrupar las muestras en racimos (clusters): 
@@ -409,7 +250,7 @@ test  <- df_model[-idx, ]
 # Usaremos los datos train y test para entrenar modelos de aprendizaje supervisado
 
 #################################################################
-##                     X. RANDOM FOREST                        ##
+##                     1. RANDOM FOREST                        ##
 #################################################################
 
 # Generamos un modelo de Random Forest para predecir la variable clase
@@ -423,6 +264,8 @@ rf_fit <- train(Clase ~ .,
                 )
 
 rf_fit
+
+plot(rf_fit) # La precisión para el RF fue óptima para el valor de mtry = 57, con 0.8445
 
 # Calculamos las predicciones para los datos test
 rf_predictions <- predict(rf_fit,
@@ -455,41 +298,58 @@ rf_roc <- multiclass.roc(
 )
 
 # Representamos gráficamente las curvas ROC cuando comparamos con AGH
-plot.roc(
-  rf_roc$rocs[[1]],
-  col  = "red",
-  lwd  = 2,
-  main = "Curva ROC del modelo RF"
-  )
+rocRF_AGH <- roc(test$Clase == "AGH", rf_probabilities[, "AGH"])
+plot(rocRF_AGH, 
+     col="red", 
+     lwd=2, 
+     legacy.axes=TRUE,
+     main = paste("ROC del modelo RF"),
+     )
 
+rocRF_CFB <- roc(test$Clase == "CFB", rf_probabilities[, "CFB"])
 plot.roc(
-  rf_roc$rocs[[2]],
+  rocRF_CFB,
   col  = "blue",
   add = TRUE,
   lwd = 2
   )
 
+rocRF_CGC <- roc(test$Clase == "CGC", rf_probabilities[, "CGC"])
 plot.roc(
-  rf_roc$rocs[[3]],
+  rocRF_CGC,
   col  = "green",
   add = TRUE,
   lwd = 2
   )
 
+rocRF_CHC <- roc(test$Clase == "CHC", rf_probabilities[, "CHC"])
 plot.roc(
-  rf_roc$rocs[[4]],
+  rocRF_CHC,
   col  = "orange",
   add = TRUE,
   lwd = 2
   )
 
+rocRF_HPB <- roc(test$Clase == "HPB", rf_probabilities[, "HPB"])
+plot.roc(
+  rocRF_HPB,
+  col  = "purple",
+  add = TRUE,
+  lwd = 2
+)
+
+# El ajuste de las curvas ROC sale perfecto para todas las comparaciones. 
+# Descartamos el sobreajuste, dado que la precisión es alta y es distinta del azar cuando 
+# la comparamos con la tasa de no información. 
+
 # Calculamos el AUC
 rf_auc <- auc(rf_roc)
 cat("AUC Random Forest (raw):", rf_auc, "\n")
 
+# El área debajo de la curva (AUC) sale también perfecto, como se esperaba tas ver las curvas ROC.
 
 #################################################################
-##                     X. SVM MODEL LINEAL                    ##
+##                     2. SVM MODEL LINEAL                     ##
 #################################################################
 
 # Generamos un modelo de SVM Lineal para predecir la variable clase
@@ -503,7 +363,7 @@ svmModelLineal <- train(Clase ~.,
                         prob.model = TRUE) 
 svmModelLineal
 
-plot(svmModelLineal)
+plot(svmModelLineal) # La precisión óptima se consiguió con un valor de C = 0.11, con 0.8633
 
 # Calculo de la precisión del modelo en el conjunto de prueba utilizando el modelo entrenado
 # Se usa el modelo entrenado para predecir las etiquetas del conjunto de prueba
@@ -557,7 +417,7 @@ plot(rocSVM_HPB, col="purple", lwd=2, legacy.axes=TRUE,
      ylab = "Sensibilidad")
 
 ###################################################################
-##                     X. k-NEAREST NEIGHBORS                    ##
+##                     3. k-NEAREST NEIGHBORS                    ##
 ###################################################################
 
 model_knn <- train(
@@ -569,6 +429,8 @@ model_knn <- train(
   tuneLength=30
 )
 
+model_knn
+
 # Se aplica el modelo entrenado con los datos nuevos para obtener las predicciones para evaluar cómo se comporta el modelo
 predicciones <- predict(model_knn, newdata=test)
 
@@ -576,7 +438,7 @@ predicciones <- predict(model_knn, newdata=test)
 confusionMatrix(predicciones, test$Clase)
 
 # Se representa la precisión del modelo en base al número de vecinos
-plot(model_knn)
+plot(model_knn) # La precisión óptima se consiguió con un valor de k = 11, con 0.9964
 
 # Se representa la curva ROC para evaluar el modelo planteado
 predicciones_prob <- predict(model_knn, newdata=test, type="prob")
@@ -584,7 +446,7 @@ predicciones_prob <- predict(model_knn, newdata=test, type="prob")
 roc_AGH <- plot(roc(test$Clase == "AGH", predicciones_prob[,1]),
                 col="red",
                 lwd=2,
-                main = "Curvas ROC por categorías"
+                main = "ROC del modelo kNN"
                 )
 roc_CFB <- plot(roc(test$Clase == "CFB", predicciones_prob[,2]),
                 col="blue",
