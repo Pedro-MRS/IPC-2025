@@ -1,0 +1,62 @@
+###====================================================================== 
+# A partir de los datos filtrados y limpiados por Paula, crearemos dos heatmap.
+# Heatmap de correlación a partir de los grupos de componentes (PCAs)
+# Heatmap de expresion a partir de los datos crudos y limpiados por Paula
+#========================================================================
+
+```{r, heatmap de componentes principales}
+# Heatmap de 6 componentes principales
+  
+cors <- cor(df_pca %>% select (ADCY3:UHMK1),
+            df_pca %>% select(PC1:PC6),
+            method="spearman", use = "pairwise.complete.obs")
+
+pheatmap(cors,
+         border_color = "grey80", 
+         main="Correlación Spearman genes-PCs")
+
+```
+
+El heatmap de correlaciones Spearman entre genes y PC1–PC6 evidencia que PC1 y PC3 concentran las correlaciones de mayor magnitud, 
+tanto positivas como negativas, para un subconjunto de genes, mientras que PC2, PC4 y PC5 muestran asociaciones más moderadas y homogéneas. 
+El dendrograma superior indica similitud entre algunos componentes principales, lo que sugiere que están influenciados por conjuntos de genes parcialmente compartidos. 
+El clustering de genes permite identificar grupos con patrones de correlación similares a lo largo de los componentes principales.
+  
+```{r, Heatmap expresión}
+## Heatmap de Expresión génica estandarizada
+# Primero organizaremos los datos en una matriz para su correcta visualización y una vez organizados se estandarizarán para un correcto análisis
+
+ mat <- df_clean %>%
+  select(ADCY3:UHMK1) %>%
+  as.matrix()
+
+mat_z <- scale (mat) #estandarización
+
+pheatmap(mat_z,
+  border_color = NA,
+  clustering_method = "complete",
+  clustering_distance_rows = "euclidean",
+  clustering_distance_cols = "euclidean",
+  main = "Heatmap expresión génica estandarizada")
+
+```
+
+##=======================METODOLOGÍA HEATMAP=======================================================
+#El heatmap se organizó mediante clustering jerárquico utilizando distancia euclídea 
+#y método de enlace completo, con el fin de agrupar individuos y genes con perfiles de 
+#expresión similares.
+##==============================================================================
+
+##-------------Explicación resultados Heatmap expresión:
+El heatmap de expresión génica estandarizada muestra patrones de coexpresión entre genes y heterogeneidad entre individuos. 
+Mediante clustering jerárquico con enlace completo se identifican grupos de individuos con perfiles de expresión similares, 
+así como conjuntos de genes que presentan patrones coordinados de sobre- e infraexpresión. 
+
+El heatmap de expresión génica estandarizada permitió visualizar patrones de coexpresión y diferencias entre los individuos analizados. 
+Este análisis exploratorio mostró la existencia de grupos de genes con comportamientos similares. 
+De forma complementaria, el heatmap de correlaciones Spearman entre genes y los seis primeros componentes principales ayudó a interpretar el PCA, 
+identificando qué genes contribuyen a cada componente. En conjunto, ambos heatmaps muestran coherencia entre los patrones de expresión observados 
+y la estructura capturada por el análisis de componentes principales. 
+
+
+ 
